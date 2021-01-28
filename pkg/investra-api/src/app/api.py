@@ -1,8 +1,6 @@
 from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-from src.app.routes.student import router as StudentRouter
-
-api_name = "Investra"
+from src.app.routes.recipe import router as RecipeRouter
+api_name = "Retaila"
 
 # origins = [
 #     "http://localhost:3000",
@@ -20,7 +18,7 @@ api_name = "Investra"
 
 
 app = FastAPI()
-app.include_router(StudentRouter, tags=["Student"], prefix="/student")
+app.include_router(RecipeRouter, tags=["Recipe"], prefix="/recipe")
 
 
 # Tags are identifiers used to group routes. Routes with the same tags are grouped into a section on the API

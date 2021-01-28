@@ -8,6 +8,7 @@ from src.app.database import (
     retrieve_students,
     update_student,
 )
+from src.app.models.recipe import RecipeSchema
 from src.app.models.student import (
     ErrorResponseModel,
     ResponseModel,
@@ -18,14 +19,14 @@ from src.app.models.student import (
 router = APIRouter()
 
 
-@router.post("/", response_description="Student data added into the database")
-async def add_student_data(student: StudentSchema = Body(...)):
-    student = jsonable_encoder(student)
-    new_student = await add_student(student)
-    return ResponseModel(new_student, "Student added successfully.")
+@router.post("/", response_description="Recipe data added into the database")
+async def add_recipe_data(recipe: RecipeSchema = Body(...)):
+    recipe = jsonable_encoder(recipe)
+    new_recipe = await add_recipe(recipe)
+    return ResponseModel(new_recipe, "Recipes added successfully.")
 
 
-@router.get("/", response_description="Students retrieved")
+@router.get("/", response_description="Recipes retrieved")
 async def get_students():
     students = await retrieve_students()
     if students:

@@ -12,63 +12,61 @@ client = motor.motor_asyncio.AsyncIOMotorClient(MONGO_DETAILS)
 
 database = client.Investra
 
-student_collection = database.get_collection("students_collection")
+recipe_collection = database.get_collection("recipes_collection")
 
 
 # helpers
 
 
-def student_helper(student) -> dict:
+def recipe_helper(recipe) -> dict:
     return {
-        "id": str(student["_id"]),
-        "fullname": student["fullname"],
-        "email": student["email"],
-        "course_of_study": student["course_of_study"],
-        "year": student["year"],
-        "GPA": student["gpa"],
+        "id": str(recipe["id"]),
+        "ingredients": recipe["ingredients"],
+        "steps": recipe["steps"],
+        "extra_notes": recipe["extra_notes"],
     }
 
 
-# Retrieve all students present in the database
-async def retrieve_students():
-    students = []
-    async for student in student_collection.find():
-        students.append(student_helper(student))
-    return students
+# Retrieve all recipes present in the database
+async def retrieve_recipes():
+    recipes = []
+    async for recipe in recipe_collection.find():
+        recipes.append(recipe_helper(recipe))
+    return recipes
 
 
-# Add a new student into to the database
-async def add_student(student_data: dict) -> dict:
-    student = await student_collection.insert_one(student_data)
-    new_student = await student_collection.find_one({"_id": student.inserted_id})
-    return student_helper(new_student)
+# Add a new recipe into to the database
+async def add_recipe(recipe_data: dict) -> dict:
+    recipe = await recipe_collection.insert_one(recipe_data)
+    new_recipe = await recipe_collection.find_one({"_id": recipe.inserted_id})
+    return recipe_helper(new_recipe)
 
 
-# Retrieve a student with a matching ID
-async def retrieve_student(id: str) -> dict:
-    student = await student_collection.find_one({"_id": ObjectId(id)})
-    if student:
-        return student_helper(student)
+# Retrieve a recipe with a matching ID
+async def retrieve_recipe(id: str) -> dict:
+    recipe = await recipe_collection.find_one({"_id": ObjectId(id)})
+    if recipe:
+        return recipe_helper(recipe)
 
 
-# Update a student with a matching ID
-async def update_student(id: str, data: dict):
+# Update a recipe with a matching ID
+async def update_recipe(id: str, data: dict):
     # Return false if an empty request body is sent.
     if len(data) < 1:
         return False
-    student = await student_collection.find_one({"_id": ObjectId(id)}) # TODO: check that id has a proper format
-    if student:
-        updated_student = await student_collection.update_one(
+    recipe = await recipe_collection.find_one({"_id": ObjectId(id)}) # TODO: check that id has a proper format
+    if recipe:
+        updated_recipe = await recipe_collection.update_one(
             {"_id": ObjectId(id)}, {"$set": data}
         )
-        if updated_student:
+        if updated_recipe:
             return True
         return False
 
 
-# Delete a student from the database
-async def delete_student(id: str):
-    student = await student_collection.find_one({"_id": ObjectId(id)})
-    if student:
-        await student_collection.delete_one({"_id": ObjectId(id)})
+# Delete a recipe from the database
+async def delete_recipe(id: str):
+    recipe = await recipe_collection.find_one({"_id": ObjectId(id)})
+    if recipe:
+        await recipe_collection.delete_one({"_id": ObjectId(id)})
         return True
