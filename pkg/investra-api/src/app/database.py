@@ -20,7 +20,8 @@ recipe_collection = database.get_collection("recipes_collection")
 
 def recipe_helper(recipe) -> dict:
     return {
-        "id": str(recipe["id"]),
+        "id": str(recipe["_id"]),
+        "recipe_name": recipe["recipe_name"],
         "ingredients": recipe["ingredients"],
         "steps": recipe["steps"],
         "extra_notes": recipe["extra_notes"],
