@@ -25,4 +25,4 @@ app.include_router(RecipeRouter, tags=["Recipe"], prefix="/recipe")
 # documentation.
 @app.get("/", tags=["root"])
 async def read_root() -> dict:
-    return {"message": "Welcome to " + api_name + " API!."}
+    return {"message": "Welcome to " + api_name + " API!!."}
