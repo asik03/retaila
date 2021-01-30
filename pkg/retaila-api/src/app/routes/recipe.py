@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Body
 from fastapi.encoders import jsonable_encoder
 
-from src.app.database import (
+from src.app.database.recipe import (
     add_recipe,
     delete_recipe,
     retrieve_recipe,

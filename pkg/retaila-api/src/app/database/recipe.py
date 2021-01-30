@@ -1,31 +1,8 @@
-import motor.motor_asyncio
-from bson.objectid import ObjectId
+from bson import ObjectId
 
-from decouple import config
-
-DB_NAME = config('DB_NAME')
-DB_PASSWORD = config('DB_PASSWORD')
-
-MONGO_DETAILS = "mongodb+srv://Investra:" + DB_PASSWORD + "@cluster0.m54ev.mongodb.net/" + DB_NAME + "?retryWrites=true" \
-                                                                                                  "&w=majority"
-client = motor.motor_asyncio.AsyncIOMotorClient(MONGO_DETAILS)
-
-database = client.Investra
+from src.app.database.database import database, recipe_helper
 
 recipe_collection = database.get_collection("recipes_collection")
-
-
-# helpers
-
-
-def recipe_helper(recipe) -> dict:
-    return {
-        "id": str(recipe["_id"]),
-        "recipe_name": recipe["recipe_name"],
-        "ingredients": recipe["ingredients"],
-        "steps": recipe["steps"],
-        "extra_notes": recipe["extra_notes"],
-    }
 
 
 # Retrieve all recipes present in the database
@@ -55,7 +32,7 @@ async def update_recipe(id: str, data: dict):
     # Return false if an empty request body is sent.
     if len(data) < 1:
         return False
-    recipe = await recipe_collection.find_one({"_id": ObjectId(id)}) # TODO: check that id has a proper format
+    recipe = await recipe_collection.find_one({"_id": ObjectId(id)})
     if recipe:
         updated_recipe = await recipe_collection.update_one(
             {"_id": ObjectId(id)}, {"$set": data}
