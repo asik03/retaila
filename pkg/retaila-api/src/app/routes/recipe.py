@@ -30,7 +30,7 @@ async def add_recipe_data(recipe: RecipeSchema = Body(...)):
     recipe = jsonable_encoder(recipe)
     new_recipe = await add_recipe(recipe)
     if new_recipe.status:
-        return ResponseModel(new_recipe.data, "Recipes added successfully.")
+        return ResponseModel(new_recipe.data, "Recipe added successfully.")
     else:
         return ErrorResponseModel(
             "An error ocurred",

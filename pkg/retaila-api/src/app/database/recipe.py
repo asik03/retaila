@@ -1,6 +1,6 @@
 from bson import ObjectId
 
-from src.app.database.database import database, recipe_helper, ResultGeneric
+from src.app.database.database import database, recipe_helper, ResultGeneric, checkEmptyBodyRequest
 from src.app.database.ingredient import ingredient_collection
 
 recipe_collection = database.get_collection("recipes_collection")
@@ -12,6 +12,13 @@ async def retrieve_recipes():
     async for recipe in recipe_collection.find():
         recipes.append(recipe_helper(recipe))
     return recipes
+
+
+# Retrieve a recipe with a matching ID
+async def retrieve_recipe(id: str) -> dict:
+    recipe = await recipe_collection.find_one({"_id": ObjectId(id)})
+    if recipe:
+        return recipe_helper(recipe)
 
 
 # Add a new recipe into to the database
@@ -41,27 +48,18 @@ async def add_recipe(recipe_data: dict) -> ResultGeneric:
     return result
 
 
-# Retrieve a recipe with a matching ID
-async def retrieve_recipe(id: str) -> dict:
-    recipe = await recipe_collection.find_one({"_id": ObjectId(id)})
-    if recipe:
-        return recipe_helper(recipe)
-
-
 # Update a recipe with a matching ID
 async def update_recipe(id: str, recipe_data: dict):
     result = ResultGeneric()
     result.status = True
 
     # Check if an empty request body is sent.
-    if len(recipe_data) < 1:
-        result.status = False
-        result.error_message.append("An empty request body is sent")
+    result = checkEmptyBodyRequest(recipe_data)
+    if not result.status:
         return result
 
-    # Check if the recipe already exists
-    recipe = await recipe_collection.find_one({"_id": ObjectId(id)})
-    if not recipe:
+    # Check if the recipe exists
+    if not await recipe_collection.find_one({"_id": ObjectId(id)}):
         result.error_message.append("Recipe id {} doesn't exist in the database.".format(id))
         result.status = False
         return result
