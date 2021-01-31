@@ -69,19 +69,3 @@ class UpdateRecipeModel(BaseModel):
                 "extra_notes": ["It is better to wait until the water turns 90ºC"],
             }
         }
-
-
-def ResponseModel(data, message):
-    return {
-        "data": [data],
-        "code": 200,
-        "message": message,
-    }
-
-
-def ErrorResponseModel(error, code, message):
-    return {
-        "error": error,
-        "code": code,
-        "message": message
-    }

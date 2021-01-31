@@ -2,60 +2,28 @@
 # -> JSON). It does not serve as a Mongo schema validator, in other words.
 
 from typing import Optional
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, Field
 
 
 # ellipsis "..." means that the Field is required. It could be replaced with None or a default value.
 class IngredientSchema(BaseModel):
-
-    fullname: str = Field(...)
-    email: EmailStr = Field(...)
-    course_of_study: str = Field(...)
-    year: int = Field(..., gt=0, lt=9)  # Greater than, less than
-    gpa: float = Field(..., le=4.0)  # Less than or equal to 4.0.
+    ingredient_key: str = Field(...)
+    # TODO: add future fields
 
     class Config:
         schema_extra = {
             "example": {
-                "fullname": "John Doe",
-                "email": "jdoe@x.edu.ng",
-                "course_of_study": "Water resources engineering",
-                "year": 2,
-                "gpa": "3.0",
+                "ingredient_key": "pasta_macaroni",
             }
         }
 
 
-class UpdateStudentModel(BaseModel):
-    fullname: Optional[str]
-    email: Optional[EmailStr]
-    course_of_study: Optional[str]
-    year: Optional[int]
-    gpa: Optional[float]
+class UpdateIngredientModel(BaseModel):
+    ingredient_key: Optional[str]
 
     class Config:
         schema_extra = {
             "example": {
-                "fullname": "John Doe",
-                "email": "jdoe@x.edu.ng",
-                "course_of_study": "Water resources and environmental engineering",
-                "year": 4,
-                "gpa": "4.0",
+                "ingredient_key": "pasta_tagliatelle",
             }
         }
-
-
-def ResponseModel(data, message):
-    return {
-        "data": [data],
-        "code": 200,
-        "message": message,
-    }
-
-
-def ErrorResponseModel(error, code, message):
-    return {
-        "error": error,
-        "code": code,
-        "message": message
-    }
