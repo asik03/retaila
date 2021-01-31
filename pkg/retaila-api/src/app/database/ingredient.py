@@ -1,6 +1,6 @@
 from bson import ObjectId
 
-from src.app.database.database import database, ingredient_helper
+from src.app.database.database import database, ingredient_helper, ResultGeneric
 
 ingredient_collection = database.get_collection("ingredients_collection")
 
@@ -13,18 +13,27 @@ async def retrieve_ingredients():
     return ingredients
 
 
-# Add a new ingredient into to the database
-async def add_ingredient(ingredient_data: dict) -> dict:
-    ingredient = await ingredient_collection.insert_one(ingredient_data)
-    new_ingredient = await ingredient_collection.find_one({"_id": ingredient.inserted_id})
-    return ingredient_helper(new_ingredient)
-
-
 # Retrieve a ingredient with a matching ID
 async def retrieve_ingredient(id: str) -> dict:
     ingredient = await ingredient_collection.find_one({"_id": ObjectId(id)})
     if ingredient:
         return ingredient_helper(ingredient)
+
+
+# Add a new ingredient into to the database
+async def add_ingredient(ingredient_data: dict) -> ResultGeneric:
+    result = ResultGeneric()
+    ingredient_key = ingredient_data.get("ingredient_key")
+    if ingredient_collection.find_one({"ingredient_key": ingredient_key}):
+        result.error_message = "Ingredient_key {} already exists in the database!".format(ingredient_key)
+        result.status = False
+        return result
+    else:
+        ingredient = await ingredient_collection.insert_one(ingredient_data)
+        new_ingredient = await ingredient_collection.find_one({"_id": ingredient.inserted_id})
+        result.data = ingredient_helper(new_ingredient)
+        result.status = True
+        return result
 
 
 # Update a ingredient with a matching ID

@@ -29,7 +29,14 @@ async def get_recipes():
 async def add_recipe_data(recipe: RecipeSchema = Body(...)):
     recipe = jsonable_encoder(recipe)
     new_recipe = await add_recipe(recipe)
-    return ResponseModel(new_recipe, "Recipes added successfully.")
+    if new_recipe.status:
+        return ResponseModel(new_recipe.data, "Recipes added successfully.")
+    else:
+        return ErrorResponseModel(
+            "An error ocurred",
+            404,
+            new_recipe.error_message,
+        )
 
 
 @recipe_router.get("/{id}", response_description="Recipe data retrieved")
@@ -46,16 +53,17 @@ async def update_recipe_data(id: str, req: UpdateRecipeModel = Body(...)):
     req = {k: v for k, v in req.dict().items() if v is not None}
 
     updated_recipe = await update_recipe(id, req)
-    if updated_recipe:
+    if updated_recipe.status:
         return ResponseModel(
+            updated_recipe.data,
             "Recipe with ID: {} name update is successful".format(id),
-            "Recipe name updated successfully",
         )
-    return ErrorResponseModel(
-        "An error occurred",
-        404,
-        "There was an error updating the recipe data.",
-    )
+    else:
+        return ErrorResponseModel(
+            "An error occurred",
+            404,
+            updated_recipe.error_message,
+        )
 
 
 @recipe_router.delete("/{id}", response_description="Recipe data deleted from the database")
@@ -66,5 +74,7 @@ async def delete_recipe_data(id: str):
             "Recipe with ID: {} removed".format(id), "Recipe deleted successfully"
         )
     return ErrorResponseModel(
-        "An error occurred", 404, "Recipe with id {0} doesn't exist".format(id)
+        "An error occurred",
+        404,
+        "Recipe with id {0} doesn't exist".format(id)
     )
