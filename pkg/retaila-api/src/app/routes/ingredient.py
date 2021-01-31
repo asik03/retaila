@@ -31,13 +31,15 @@ async def add_ingredient_data(ingredient: IngredientSchema = Body(...)):
     ingredient = jsonable_encoder(ingredient)
     new_ingredient = await add_ingredient(ingredient)
     if new_ingredient.status:
-        return ResponseModel(new_ingredient.data, "Ingredients added successfully.")
+        return ResponseModel(
+            new_ingredient.data,
+            "Ingredients added successfully.")
     else:
         return ErrorResponseModel(
             "An error occurred",
             404,
             new_ingredient.error_message,
-    )
+        )
 
 
 @ingredient_router.get("/{id}", response_description="Ingredient data retrieved")

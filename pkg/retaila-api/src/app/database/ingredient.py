@@ -13,6 +13,13 @@ async def retrieve_ingredients():
     return ingredients
 
 
+# Retrieve a ingredient with a matching ID
+async def retrieve_ingredient(id: str) -> dict:
+    ingredient = await ingredient_collection.find_one({"_id": ObjectId(id)})
+    if ingredient:
+        return ingredient_helper(ingredient)
+
+
 # Add a new ingredient into to the database
 async def add_ingredient(ingredient_data: dict) -> ResultGeneric:
     result = ResultGeneric()
@@ -27,13 +34,6 @@ async def add_ingredient(ingredient_data: dict) -> ResultGeneric:
         result.data = ingredient_helper(new_ingredient)
         result.status = True
         return result
-
-
-# Retrieve a ingredient with a matching ID
-async def retrieve_ingredient(id: str) -> dict:
-    ingredient = await ingredient_collection.find_one({"_id": ObjectId(id)})
-    if ingredient:
-        return ingredient_helper(ingredient)
 
 
 # Update a ingredient with a matching ID

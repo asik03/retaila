@@ -35,4 +35,4 @@ def ingredient_helper(ingredient) -> dict:
 class ResultGeneric:
     data = None
     status = False
-    error_message = None
+    error_message = []
