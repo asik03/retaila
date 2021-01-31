@@ -30,3 +30,9 @@ def ingredient_helper(ingredient) -> dict:
         "id": str(ingredient["_id"]),
         "ingredient_key": ingredient["ingredient_key"],
     }
+
+
+class ResultGeneric:
+    data = None
+    status = False
+    error_message = None

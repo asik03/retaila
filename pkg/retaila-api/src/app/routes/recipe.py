@@ -66,5 +66,7 @@ async def delete_recipe_data(id: str):
             "Recipe with ID: {} removed".format(id), "Recipe deleted successfully"
         )
     return ErrorResponseModel(
-        "An error occurred", 404, "Recipe with id {0} doesn't exist".format(id)
+        "An error occurred",
+        404,
+        "Recipe with id {0} doesn't exist".format(id)
     )

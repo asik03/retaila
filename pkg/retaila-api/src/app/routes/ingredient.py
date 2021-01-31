@@ -26,11 +26,18 @@ async def get_ingredients():
     return ResponseModel(ingredients, "Empty list returned")
 
 
-@ingredient_router.post("/", response_description="Ingredient data added into the database")
+@ingredient_router.post("/",)
 async def add_ingredient_data(ingredient: IngredientSchema = Body(...)):
     ingredient = jsonable_encoder(ingredient)
     new_ingredient = await add_ingredient(ingredient)
-    return ResponseModel(new_ingredient, "Ingredients added successfully.")
+    if new_ingredient.status:
+        return ResponseModel(new_ingredient.data, "Ingredients added successfully.")
+    else:
+        return ErrorResponseModel(
+            "An error occurred",
+            404,
+            new_ingredient.error_message,
+    )
 
 
 @ingredient_router.get("/{id}", response_description="Ingredient data retrieved")
@@ -38,7 +45,10 @@ async def get_ingredient_data(id: str):
     ingredient = await retrieve_ingredient(id)
     if ingredient:
         return ResponseModel(ingredient, "Ingredient data retrieved successfully")
-    return ErrorResponseModel("An error occurred.", 404, "Ingredient doesn't exist.")
+    return ErrorResponseModel(
+        "An error occurred.",
+        404,
+        "Ingredient doesn't exist.")
 
 
 @ingredient_router.put("/{id}")
@@ -68,5 +78,7 @@ async def delete_ingredient_data(id: str):
             "Ingredient with ID: {} removed".format(id), "Ingredient deleted successfully"
         )
     return ErrorResponseModel(
-        "An error occurred", 404, "Ingredient with id {0} doesn't exist".format(id)
+        "An error occurred",
+        404,
+        "Ingredient with id {0} doesn't exist".format(id)
     )
