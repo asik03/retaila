@@ -15,6 +15,21 @@ database = client.Retaila
 
 
 # helpers
+def brand_helper(brand) -> dict:
+    return {
+        "id": str(brand["_id"]),
+        "brand_key": brand["brand_key"],
+        "super_private_brand": brand["super_private_brand"],
+    }
+
+
+def category_helper(brand) -> dict:
+    return {
+        "id": str(brand["_id"]),
+        "category_key": brand["category_key"],
+    }
+
+
 def recipe_helper(recipe) -> dict:
     return {
         "id": str(recipe["_id"]),
@@ -32,7 +47,36 @@ def ingredient_helper(ingredient) -> dict:
     }
 
 
+def product_helper(product) -> dict:
+    return {
+        "id": str(product["_id"]),
+        "product_name": product["product_name"],
+        "ingredient_key": product["ingredient_key"],
+        "brand": product["brand"],
+        "category": product["category"],
+        "quantity": product["quantity"],
+        "calories": product["calories"],
+        "eco": product["eco"],
+        "bio": product["bio"],
+
+    }
+
+
+# Utils classes
 class ResultGeneric:
     data = None
     status = False
     error_message = []
+
+
+# Utils functions
+def checkEmptyBodyRequest(data):
+    result = ResultGeneric()
+    # Check if an empty request body is sent.
+    if len(data) < 1:
+        result.status = False
+        result.error_message.append("An empty request body is sent")
+    else:
+        result.status = True
+
+    return result
