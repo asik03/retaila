@@ -7,7 +7,7 @@ from pydantic import BaseModel, Field
 
 # ellipsis "..." means that the Field is required. It could be replaced with None or a default value.
 class IngredientSchema(BaseModel):
-    ingredient_key: str = Field(...)
+    ingredient_key: str
     # TODO: add future fields
 
     class Config:

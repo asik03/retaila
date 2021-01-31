@@ -33,7 +33,7 @@ async def add_ingredient_data(ingredient: IngredientSchema = Body(...)):
     if new_ingredient.status:
         return ResponseModel(
             new_ingredient.data,
-            "Ingredients added successfully.")
+            "Ingredient added successfully.")
     else:
         return ErrorResponseModel(
             "An error occurred",
@@ -60,7 +60,7 @@ async def update_ingredient_data(id: str, req: UpdateIngredientModel = Body(...)
 
     updated_ingredient = await update_ingredient(id, req)
 
-    if updated_ingredient:
+    if updated_ingredient.status:
         return ResponseModel(
             "Ingredient with ID: {} name update is successful".format(id),
             "Ingredient name updated successfully",
@@ -68,7 +68,7 @@ async def update_ingredient_data(id: str, req: UpdateIngredientModel = Body(...)
     return ErrorResponseModel(
         "An error occurred",
         404,
-        "There was an error updating the ingredient data.",
+        updated_ingredient.error_message,
     )
 
 
