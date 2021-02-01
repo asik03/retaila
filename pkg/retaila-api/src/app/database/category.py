@@ -1,4 +1,5 @@
 from bson import ObjectId
+from pymongo.errors import DuplicateKeyError
 
 from src.app.database.database import database, category_helper, ResultGeneric, checkEmptyBodyRequest
 
@@ -25,16 +26,17 @@ async def add_category(category_data: dict) -> ResultGeneric:
     result = ResultGeneric()
     result.status = True
 
-    # Check if the category already exist in the database
-    category_key = category_data.get("category_key")
-    if await category_collection.find_one({"category_key": category_key}):
-        result.error_message = "Category_key {} already exists in the database!".format(category_key)
-        result.status = False
-    else:
+    try:
         category = await category_collection.insert_one(category_data)
         new_category = await category_collection.find_one({"_id": category.inserted_id})
         result.data = category_helper(new_category)
         result.status = True
+    except DuplicateKeyError:
+        result.error_message = "Category '{}' already exists in the database!".format(category_data.get("_id"))
+        result.status = False
+    except BaseException:
+        result.error_message.append("Unrecognized error")
+        result.status = False
 
     return result
 

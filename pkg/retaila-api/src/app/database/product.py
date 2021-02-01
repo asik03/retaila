@@ -1,4 +1,5 @@
 from bson import ObjectId
+from pymongo.errors import DuplicateKeyError
 
 from src.app.database.brand import brand_collection
 from src.app.database.category import category_collection
@@ -50,15 +51,21 @@ async def add_product(product_data: dict) -> ResultGeneric:
         return result
 
     # Adding the product into the database
-    product = await product_collection.insert_one(product_data)
-    if product:
+    try:
+        product = await product_collection.insert_one(product_data)
         new_product = await product_collection.find_one({"_id": product.inserted_id})
-        result.status = True
         result.data = product_helper(new_product)
-    else:
+        result.status = True
+    except DuplicateKeyError:
+        result.error_message.append("Product '{}' already exists in the database!".format(product_data.get("_id")))
         result.status = False
-        result.error_message.append("There was a problem while adding the product with id {} into the database".format(id))
+    except BaseException:
+        result.error_message.append("Unrecognized error")
+        result.status = False
+
     return result
+
+    # Adding the product into the database
 
 
 # Update a product with a matching ID

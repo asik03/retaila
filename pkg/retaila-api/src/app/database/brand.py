@@ -1,4 +1,5 @@
 from bson import ObjectId
+from pymongo.errors import DuplicateKeyError
 
 from src.app.database.database import database, brand_helper, ResultGeneric, checkEmptyBodyRequest
 
@@ -25,16 +26,17 @@ async def add_brand(brand_data: dict) -> ResultGeneric:
     result = ResultGeneric()
     result.status = True
 
-    # Check if the brand already exist in the database
-    brand_key = brand_data.get("brand_key")
-    if await brand_collection.find_one({"brand_key": brand_key}):
-        result.error_message = "Brand_key {} already exists in the database!".format(brand_key)
-        result.status = False
-    else:
+    try:
         brand = await brand_collection.insert_one(brand_data)
         new_brand = await brand_collection.find_one({"_id": brand.inserted_id})
         result.data = brand_helper(new_brand)
         result.status = True
+    except DuplicateKeyError:
+        result.error_message.append("Brand '{}' already exists in the database!".format(brand_data.get("_id")))
+        result.status = False
+    except BaseException:
+        result.error_message.append("Unrecognized error")
+        result.status = False
 
     return result
 
@@ -49,16 +51,17 @@ async def update_brand(id: str, brand_data: dict):
     if not result.status:
         return result
 
-    # Check if the recipe exists
+    # Check if the brand exists # TODO: change this with new _id format
     brand = await brand_collection.find_one({"_id": ObjectId(id)})
     if not brand:
         result.error_message.append("Brand id {} doesn't exist in the database.".format(id))
         result.status = False
         return result
 
-    # Check if the brand_key has the same name of the the brand_key to be updated
-    if not brand.get("brand_key") == brand_data.get("brand_key"):
-        result.error_message.append("Brand_key {} is not the same as the one with the id {} in the database.".format(brand.get("brand_key"), id))
+    # Check if the brand_id has the same name of the the brand_id to be updated
+    if not brand.get("brand_id") == brand_data.get("brand_id"):
+        result.error_message.append(
+            "brand_id {} is not the same as the one with the id {} in the database.".format(brand.get("brand_id"), id))
         result.status = False
         return result
 

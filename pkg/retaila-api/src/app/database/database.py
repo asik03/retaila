@@ -16,17 +16,16 @@ database = client.Retaila
 
 # helpers
 def brand_helper(brand) -> dict:
+    print(str(brand))
     return {
         "id": str(brand["_id"]),
-        "brand_key": brand["brand_key"],
         "super_private_brand": brand["super_private_brand"],
     }
 
 
-def category_helper(brand) -> dict:
+def category_helper(category) -> dict:
     return {
-        "id": str(brand["_id"]),
-        "category_key": brand["category_key"],
+        "id": str(category["_id"]),
     }
 
 
@@ -43,7 +42,6 @@ def recipe_helper(recipe) -> dict:
 def ingredient_helper(ingredient) -> dict:
     return {
         "id": str(ingredient["_id"]),
-        "ingredient_key": ingredient["ingredient_key"],
     }
 
 

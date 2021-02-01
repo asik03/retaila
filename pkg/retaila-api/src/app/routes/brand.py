@@ -35,7 +35,7 @@ async def add_brand_data(brand: BrandSchema = Body(...)):
             new_brand.data,
             "Brand added successfully.")
     else:
-        raise ErrorResponseModel(
+        return ErrorResponseModel(
             "An error occurred",
             404,
             new_brand.error_message,
@@ -47,7 +47,7 @@ async def get_brand_data(id: str):
     brand = await retrieve_brand(id)
     if brand:
         return ResponseModel(brand, "Brand data retrieved successfully")
-    raise ErrorResponseModel(
+    return ErrorResponseModel(
         "An error occurred.",
         404,
         "Brand doesn't exist.")
@@ -65,7 +65,7 @@ async def update_brand_data(id: str, req: UpdateBrandModel = Body(...)):
             "Brand with ID: {} name update is successful".format(id),
             "Brand name updated successfully",
         )
-    raise ErrorResponseModel(
+    return ErrorResponseModel(
         "An error occurred",
         404,
         updated_brand.error_message,
@@ -79,7 +79,7 @@ async def delete_brand_data(id: str):
         return ResponseModel(
             "Brand with ID: {} removed".format(id), "Brand deleted successfully"
         )
-    raise ErrorResponseModel(
+    return ErrorResponseModel(
         "An error occurred",
         404,
         "Brand with id {0} doesn't exist".format(id)

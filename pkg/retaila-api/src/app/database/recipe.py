@@ -1,4 +1,5 @@
 from bson import ObjectId
+from pymongo.errors import DuplicateKeyError
 
 from src.app.database.database import database, recipe_helper, ResultGeneric, checkEmptyBodyRequest
 from src.app.database.ingredient import ingredient_collection
@@ -37,14 +38,18 @@ async def add_recipe(recipe_data: dict) -> ResultGeneric:
         return result
 
     # Adding the recipe into the database
-    recipe = await recipe_collection.insert_one(recipe_data)
-    if recipe:
+    try:
+        recipe = await recipe_collection.insert_one(recipe_data)
         new_recipe = await recipe_collection.find_one({"_id": recipe.inserted_id})
-        result.status = True
         result.data = recipe_helper(new_recipe)
-    else:
+        result.status = True
+    except DuplicateKeyError:
+        result.error_message.append("Recipe '{}' already exists in the database!".format(recipe_data.get("_id")))
         result.status = False
-        result.error_message.append("There was a problem while adding the recipe with id {} into the database".format(id))
+    except BaseException:
+        result.error_message.append("Unrecognized error")
+        result.status = False
+
     return result
 
 

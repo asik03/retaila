@@ -3,27 +3,27 @@
 
 from typing import Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 # ellipsis "..." means that the Field is required. It could be replaced with None or a default value.
 class CategorySchema(BaseModel):
-    category_key: str
+    category_id: str = Field(alias="_id", description="Category id")
 
     class Config:
         schema_extra = {
             "example": {
-                "category_key": "pasta",
+                "category_id": "pasta",
             }
         }
 
 
 class UpdateIngredientModel(BaseModel):
-    category_key: Optional[str]
+    category_id: str = Field(alias="_id", description="Brand id")
 
     class Config:
         schema_extra = {
             "example": {
-                "category_key": "pasta",
+                "category_id": "pasta",
             }
         }

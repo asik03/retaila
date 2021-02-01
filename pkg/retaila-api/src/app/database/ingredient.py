@@ -1,4 +1,5 @@
 from bson import ObjectId
+from pymongo.errors import DuplicateKeyError
 
 from src.app.database.database import database, ingredient_helper, ResultGeneric, checkEmptyBodyRequest
 
@@ -25,16 +26,17 @@ async def add_ingredient(ingredient_data: dict) -> ResultGeneric:
     result = ResultGeneric()
     result.status = True
 
-    # Check if the ingredient already exist in the database
-    ingredient_key = ingredient_data.get("ingredient_key")
-    if await ingredient_collection.find_one({"ingredient_key": ingredient_key}):
-        result.error_message = "Ingredient_key {} already exists in the database!".format(ingredient_key)
-        result.status = False
-    else:
+    try:
         ingredient = await ingredient_collection.insert_one(ingredient_data)
         new_ingredient = await ingredient_collection.find_one({"_id": ingredient.inserted_id})
         result.data = ingredient_helper(new_ingredient)
         result.status = True
+    except DuplicateKeyError:
+        result.error_message.append("ingredient '{}' already exists in the database!".format(ingredient_data.get("_id")))
+        result.status = False
+    except BaseException:
+        result.error_message.append("Unrecognized error")
+        result.status = False
 
     return result
 
@@ -49,7 +51,7 @@ async def update_ingredient(id: str, ingredient_data: dict):
     if not result.status:
         return result
 
-    # Check if the ingredient exists
+    # Check if the ingredient exists # TODO: update to new _id
     ingredient = await ingredient_collection.find_one({"_id": ObjectId(id)})
     if not ingredient:
         result.error_message.append("Ingredient id {} doesn't exist in the database.".format(id))
