@@ -4,7 +4,6 @@ from pymongo.errors import DuplicateKeyError
 from src.app.database.logic.brand import brand_collection
 from src.app.database.logic.category import category_collection
 from src.app.database.database import ResultGeneric, database, checkEmptyBodyRequest
-from src.app.database.models.product import product_helper
 from src.app.database.logic.ingredient import ingredient_collection
 
 product_collection = database.get_collection("products_collection")
@@ -126,3 +125,17 @@ async def delete_product(id: str):
     if product:
         await product_collection.delete_one({"_id": ObjectId(id)})
         return True
+
+
+def product_helper(product) -> dict:
+    return {
+        "id": str(product["_id"]),
+        "product_name": product["product_name"],
+        "ingredient_key": product["ingredient_key"],
+        "brand": product["brand"],
+        "category": product["category"],
+        "quantity": product["quantity"],
+        "calories": product["calories"],
+        "eco": product["eco"],
+        "bio": product["bio"],
+    }

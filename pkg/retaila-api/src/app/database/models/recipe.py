@@ -2,7 +2,7 @@
 # -> JSON). It does not serve as a Mongo schema validator, in other words.
 
 from typing import Optional, List
-from pydantic import BaseModel, EmailStr, Field, Schema
+from pydantic import BaseModel
 
 
 class IngredientQuantity(BaseModel):
@@ -13,7 +13,7 @@ class IngredientQuantity(BaseModel):
 # ellipsis "..." means that the Field is required. It could be replaced with None or a default value.
 class RecipeSchema(BaseModel):
     recipe_name: str
-    author: str
+    author_id: str
     ingredients: List[IngredientQuantity] = []  # Ingredients list, made of "ingredients key"
     steps: List[str] = []  # List of the steps or instructions to make the recipe.
     extra_notes: List[str] = []
@@ -25,11 +25,11 @@ class RecipeSchema(BaseModel):
                 "author_id": "AsierAlcaideMartinez",
                 "ingredients": [
                     {
-                        "ingredient_key": "pasta macaroni",
+                        "ingredient_key": "pasta_macaroni",
                         "quantity": 200
                     },
                     {
-                        "ingredient_key": "pesto sauce",
+                        "ingredient_key": "pesto_sauce",
                         "quantity": 50
                     },
                     {
@@ -56,11 +56,11 @@ class UpdateRecipeModel(BaseModel):
                 "author_id": "AsierAlcaideMartinez",
                 "ingredients": [
                     {
-                        "ingredient_key": "pasta macaroni",
+                        "ingredient_key": "pasta_macaroni",
                         "quantity": 200
                     },
                     {
-                        "ingredient_key": "pesto sauce",
+                        "ingredient_key": "pesto_sauce",
                         "quantity": 50
                     },
                     {
@@ -74,12 +74,3 @@ class UpdateRecipeModel(BaseModel):
         }
 
 
-def recipe_helper(recipe) -> dict:
-    return {
-        "id": str(recipe["_id"]),
-        "recipe_name": recipe["recipe_name"],
-        "author": recipe["author_id"],
-        "ingredients": recipe["ingredients"],
-        "steps": recipe["steps"],
-        "extra_notes": recipe["extra_notes"],
-    }

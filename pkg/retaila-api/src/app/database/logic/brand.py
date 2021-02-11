@@ -2,7 +2,6 @@ from bson import ObjectId
 from pymongo.errors import DuplicateKeyError
 
 from src.app.database.database import database, ResultGeneric, checkEmptyBodyRequest
-from src.app.database.models.brand import brand_helper
 
 brand_collection = database.get_collection("brands_collection")
 
@@ -87,3 +86,11 @@ async def delete_brand(id: str):
     if brand:
         await brand_collection.delete_one({"_id": ObjectId(id)})
         return True
+
+
+def brand_helper(brand) -> dict:
+    print(str(brand))
+    return {
+        "id": str(brand["_id"]),
+        "super_private_brand": brand["super_private_brand"],
+    }

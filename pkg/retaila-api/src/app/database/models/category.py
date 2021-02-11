@@ -1,8 +1,6 @@
 # Pydantic Schema's are used for validating data along with serializing (JSON -> Python) and de-serializing (Python
 # -> JSON). It does not serve as a Mongo schema validator, in other words.
 
-from typing import Optional
-
 from pydantic import BaseModel, Field
 
 
@@ -29,7 +27,3 @@ class UpdateIngredientModel(BaseModel):
         }
 
 
-def category_helper(category) -> dict:
-    return {
-        "id": str(category["_id"]),
-    }

@@ -2,9 +2,14 @@ from bson import ObjectId
 from pymongo.errors import DuplicateKeyError
 
 from src.app.database.database import database, ResultGeneric, checkEmptyBodyRequest
-from src.app.database.models.ingredient import ingredient_helper
 
 ingredient_collection = database.get_collection("ingredients_collection")
+
+
+def ingredient_helper(ingredient) -> dict:
+    return {
+        "id": str(ingredient["_id"]),
+    }
 
 
 # Retrieve all ingredients present in the database
@@ -79,3 +84,5 @@ async def delete_ingredient(id: str):
     if ingredient:
         await ingredient_collection.delete_one({"_id": ObjectId(id)})
         return True
+
+

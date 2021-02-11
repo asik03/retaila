@@ -2,7 +2,6 @@ from bson import ObjectId
 from pymongo.errors import DuplicateKeyError
 
 from src.app.database.database import database, ResultGeneric, checkEmptyBodyRequest
-from src.app.database.models.category import category_helper
 
 category_collection = database.get_collection("categories_collection")
 
@@ -79,3 +78,9 @@ async def delete_category(id: str):
     if category:
         await category_collection.delete_one({"_id": ObjectId(id)})
         return True
+
+
+def category_helper(category) -> dict:
+    return {
+        "id": str(category["_id"]),
+    }

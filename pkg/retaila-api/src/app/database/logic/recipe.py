@@ -1,11 +1,23 @@
+from typing import Type
+
 from bson import ObjectId
 from pymongo.errors import DuplicateKeyError
 
 from src.app.database.database import database, ResultGeneric, checkEmptyBodyRequest
-from src.app.database.models.recipe import recipe_helper
 from src.app.database.logic.ingredient import ingredient_collection
 
 recipe_collection = database.get_collection("recipes_collection")
+
+
+def recipe_helper(recipe) -> dict:
+    return {
+        "id": str(recipe["_id"]),
+        "recipe_name": recipe["recipe_name"],
+        "author": recipe["author_id"],
+        "ingredients": recipe["ingredients"],
+        "steps": recipe["steps"],
+        "extra_notes": recipe["extra_notes"],
+    }
 
 
 # Retrieve all recipes present in the database
@@ -24,9 +36,11 @@ async def retrieve_recipe(id: str) -> dict:
 
 
 # Add a new recipe into to the database
-async def add_recipe(recipe_data: dict) -> ResultGeneric:
-    result = ResultGeneric()
+async def add_recipe(recipe_data: dict) -> Type[ResultGeneric]:
+    result = ResultGeneric
     result.status = True
+    result.error_message = []
+    result.data = None
 
     # Check if the ingredients of the recipe exists in the database
     for ingredient in recipe_data.get("ingredients"):
@@ -107,3 +121,5 @@ async def delete_recipe(id: str):
     if recipe:
         await recipe_collection.delete_one({"_id": ObjectId(id)})
         return True
+
+
