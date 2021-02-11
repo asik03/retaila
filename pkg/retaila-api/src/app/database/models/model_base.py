@@ -1,4 +1,7 @@
 from bson.objectid import ObjectId as BsonObjectId
+from fastapi import status
+
+from fastapi.responses import JSONResponse
 
 
 class PydanticObjectId(BsonObjectId):
@@ -13,17 +16,27 @@ class PydanticObjectId(BsonObjectId):
         return str(v)
 
 
-def ResponseModel(data, message):
-    return {
-        "data": [data],
-        "code": 200,
-        "message": message,
-    }
-
-
-def ErrorResponseModel(error, code, message):
-    return {
-        "error": error,
+def ResponseModel(code=status.HTTP_200_OK, message="Generic response. WIP to be implemented.", data=""):
+    body = {
         "code": code,
-        "message": message
+        "message": message,
+        "data": [data],
     }
+
+    return JSONResponse(
+        status_code=code,
+        content=body
+    )
+
+
+def ErrorResponseModel(code=status.HTTP_400_BAD_REQUEST, error_message="Generic error occurred."):
+    body = {
+        "code": code,
+        "message": "An error occurred.",
+        "error_message": error_message,
+    }
+
+    return JSONResponse(
+        status_code=code,
+        content=body
+    )
