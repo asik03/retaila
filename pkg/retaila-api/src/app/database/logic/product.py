@@ -1,3 +1,5 @@
+from typing import Type
+
 from bson import ObjectId
 from pymongo.errors import DuplicateKeyError
 
@@ -25,8 +27,8 @@ async def retrieve_product(id: str) -> dict:
 
 
 # Add a new product into to the database
-async def add_product(product_data: dict) -> ResultGeneric:
-    result = ResultGeneric()
+async def add_product(product_data: dict) -> Type[ResultGeneric]:
+    result = ResultGeneric
     result.status = True
 
     # Check if the ingredient_key exists in the database

@@ -45,7 +45,7 @@ async def add_recipe(recipe_data: dict) -> Type[ResultGeneric]:
     # Check if the ingredients of the recipe exists in the database
     for ingredient in recipe_data.get("ingredients"):
         ingredient_key = ingredient.get("ingredient_key")
-        if not await ingredient_collection.find_one({"ingredient_key": ingredient_key}):
+        if not await ingredient_collection.find_one({"_id": ingredient_key}):
             result.error_message.append("The ingredient {} doesn't exists in the database".format(ingredient_key))
             result.status = False
     if not result.status:
@@ -70,7 +70,7 @@ async def add_recipe(recipe_data: dict) -> Type[ResultGeneric]:
 
 # Update a recipe with a matching ID
 async def update_recipe(id: str, recipe_data: dict):
-    result = ResultGeneric()
+    result = ResultGeneric
     result.status = True
 
     # Check if an empty request body is sent.
@@ -94,7 +94,7 @@ async def update_recipe(id: str, recipe_data: dict):
     # Check if the ingredients of the recipe exists in the database
     for ingredient in recipe_data.get("ingredients"):
         ingredient_key = ingredient.get("ingredient_key")
-        if not await ingredient_collection.find_one({"ingredient_key": ingredient_key}):
+        if not await ingredient_collection.find_one({"_id": ingredient_key}):
             result.error_message.append("The ingredient {} doesn't exists in the database".format(ingredient_key))
             result.status = False
     if not result.status:

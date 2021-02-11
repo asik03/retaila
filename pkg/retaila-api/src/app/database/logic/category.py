@@ -22,8 +22,8 @@ async def retrieve_category(id: str) -> dict:
 
 
 # Add a new category into to the database
-async def add_category(category_data: dict) -> ResultGeneric:
-    result = ResultGeneric()
+async def add_category(category_data: dict) -> Type[ResultGeneric]:
+    result = ResultGeneric
     result.status = True
 
     try:
@@ -43,7 +43,7 @@ async def add_category(category_data: dict) -> ResultGeneric:
 
 # Update a category with a matching ID
 async def update_category(id: str, category_data: dict):
-    result = ResultGeneric()
+    result = ResultGeneric
     result.status = True
 
     # Check if an empty request body is sent.

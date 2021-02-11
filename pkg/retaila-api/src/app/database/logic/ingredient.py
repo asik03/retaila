@@ -1,4 +1,5 @@
-from bson import ObjectId
+from typing import Type
+
 from pymongo.errors import DuplicateKeyError
 
 from src.app.database.database import database, ResultGeneric, checkEmptyBodyRequest
@@ -22,14 +23,14 @@ async def retrieve_ingredients():
 
 # Retrieve a ingredient with a matching ID
 async def retrieve_ingredient(id: str) -> dict:
-    ingredient = await ingredient_collection.find_one({"_id": ObjectId(id)})
+    ingredient = await ingredient_collection.find_one({"_id": id})
     if ingredient:
         return ingredient_helper(ingredient)
 
 
 # Add a new ingredient into to the database
-async def add_ingredient(ingredient_data: dict) -> ResultGeneric:
-    result = ResultGeneric()
+async def add_ingredient(ingredient_data: dict) -> Type[ResultGeneric]:
+    result = ResultGeneric
     result.status = True
 
     try:
@@ -49,7 +50,7 @@ async def add_ingredient(ingredient_data: dict) -> ResultGeneric:
 
 # Update a ingredient with a matching ID
 async def update_ingredient(id: str, ingredient_data: dict):
-    result = ResultGeneric()
+    result = ResultGeneric
     result.status = True
 
     # Check if an empty request body is sent.
@@ -58,7 +59,7 @@ async def update_ingredient(id: str, ingredient_data: dict):
         return result
 
     # Check if the ingredient exists # TODO: update to new _id
-    ingredient = await ingredient_collection.find_one({"_id": ObjectId(id)})
+    ingredient = await ingredient_collection.find_one({"_id": id})
     if not ingredient:
         result.error_message.append("Ingredient id {} doesn't exist in the database.".format(id))
         result.status = False
@@ -66,11 +67,11 @@ async def update_ingredient(id: str, ingredient_data: dict):
 
     # Update the ingredient
     updated_ingredient = await ingredient_collection.update_one(
-        {"_id": ObjectId(id)}, {"$set": ingredient_data}
+        {"_id": id}, {"$set": ingredient_data}
     )
     if updated_ingredient:
         result.status = True
-        ingredient_updated = await ingredient_collection.find_one({"_id": ObjectId(id)})
+        ingredient_updated = await ingredient_collection.find_one({"_id": id})
         result.data = ingredient_helper(ingredient_updated)
     else:
         result.status = False
@@ -80,9 +81,9 @@ async def update_ingredient(id: str, ingredient_data: dict):
 
 # Delete a ingredient from the database
 async def delete_ingredient(id: str):
-    ingredient = await ingredient_collection.find_one({"_id": ObjectId(id)})
+    ingredient = await ingredient_collection.find_one({"_id": id})
     if ingredient:
-        await ingredient_collection.delete_one({"_id": ObjectId(id)})
+        await ingredient_collection.delete_one({"_id": id})
         return True
 
 

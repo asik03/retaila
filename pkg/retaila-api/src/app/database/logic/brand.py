@@ -1,9 +1,18 @@
-from bson import ObjectId
+from typing import Type
+
 from pymongo.errors import DuplicateKeyError
 
 from src.app.database.database import database, ResultGeneric, checkEmptyBodyRequest
 
 brand_collection = database.get_collection("brands_collection")
+
+
+def brand_helper(brand) -> dict:
+    print(str(brand))
+    return {
+        "id": str(brand["_id"]),
+        "super_private_brand": brand["super_private_brand"],
+    }
 
 
 # Retrieve all brands present in the database
@@ -16,14 +25,14 @@ async def retrieve_brands():
 
 # Retrieve a brand with a matching ID
 async def retrieve_brand(id: str) -> dict:
-    brand = await brand_collection.find_one({"_id": ObjectId(id)})
+    brand = await brand_collection.find_one({"_id": id})
     if brand:
         return brand_helper(brand)
 
 
 # Add a new brand into to the database
-async def add_brand(brand_data: dict) -> ResultGeneric:
-    result = ResultGeneric()
+async def add_brand(brand_data: dict) -> Type[ResultGeneric]:
+    result = ResultGeneric
     result.status = True
 
     try:
@@ -52,7 +61,7 @@ async def update_brand(id: str, brand_data: dict):
         return result
 
     # Check if the brand exists # TODO: change this with new _id format
-    brand = await brand_collection.find_one({"_id": ObjectId(id)})
+    brand = await brand_collection.find_one({"_id": id})
     if not brand:
         result.error_message.append("Brand id {} doesn't exist in the database.".format(id))
         result.status = False
@@ -67,11 +76,11 @@ async def update_brand(id: str, brand_data: dict):
 
     # Update the brand
     updated_brand = await brand_collection.update_one(
-        {"_id": ObjectId(id)}, {"$set": brand_data}
+        {"_id": id}, {"$set": brand_data}
     )
     if updated_brand:
         result.status = True
-        brand_updated = await brand_collection.find_one({"_id": ObjectId(id)})
+        brand_updated = await brand_collection.find_one({"_id": id})
         result.data = brand_helper(brand_updated)
     else:
         result.status = False
@@ -82,15 +91,8 @@ async def update_brand(id: str, brand_data: dict):
 
 # Delete a brand from the database
 async def delete_brand(id: str):
-    brand = await brand_collection.find_one({"_id": ObjectId(id)})
+    brand = await brand_collection.find_one({"_id": id})
     if brand:
-        await brand_collection.delete_one({"_id": ObjectId(id)})
+        await brand_collection.delete_one({"_id": id})
         return True
 
-
-def brand_helper(brand) -> dict:
-    print(str(brand))
-    return {
-        "id": str(brand["_id"]),
-        "super_private_brand": brand["super_private_brand"],
-    }
