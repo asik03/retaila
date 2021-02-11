@@ -1,10 +1,10 @@
 from bson import ObjectId
 from pymongo.errors import DuplicateKeyError
 
-from src.app.database.brand import brand_collection
-from src.app.database.category import category_collection
+from src.app.database.logic.brand import brand_collection
+from src.app.database.logic.category import category_collection
 from src.app.database.database import ResultGeneric, database, product_helper, checkEmptyBodyRequest
-from src.app.database.ingredient import ingredient_collection
+from src.app.database.logic.ingredient import ingredient_collection
 
 product_collection = database.get_collection("products_collection")
 

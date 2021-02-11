@@ -1,15 +1,15 @@
 from fastapi import APIRouter, Body
 from fastapi.encoders import jsonable_encoder
 
-from src.app.database.brand import (
+from src.app.database.logic.brand import (
     add_brand,
     delete_brand,
     retrieve_brand,
     retrieve_brands,
     update_brand,
 )
-from src.app.models.model_base import ResponseModel, ErrorResponseModel
-from src.app.models.brand import (
+from src.app.database.models.model_base import ResponseModel, ErrorResponseModel
+from src.app.database.models.brand import (
     BrandSchema,
     UpdateBrandModel,
 )
@@ -26,7 +26,7 @@ async def get_brands():
     return ResponseModel(brands, "Empty list returned")
 
 
-@brand_router.post("/",)
+@brand_router.post("/")
 async def add_brand_data(brand: BrandSchema = Body(...)):
     brand = jsonable_encoder(brand)
     new_brand = await add_brand(brand)
@@ -47,6 +47,7 @@ async def get_brand_data(id: str):
     brand = await retrieve_brand(id)
     if brand:
         return ResponseModel(brand, "Brand data retrieved successfully")
+    # TODO: JSONResponse
     return ErrorResponseModel(
         "An error occurred.",
         404,

@@ -2,7 +2,7 @@ from bson import ObjectId
 from pymongo.errors import DuplicateKeyError
 
 from src.app.database.database import database, recipe_helper, ResultGeneric, checkEmptyBodyRequest
-from src.app.database.ingredient import ingredient_collection
+from src.app.database.logic.ingredient import ingredient_collection
 
 recipe_collection = database.get_collection("recipes_collection")
 

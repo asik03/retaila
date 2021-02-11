@@ -12,7 +12,7 @@ class IngredientSchema(BaseModel):
     class Config:
         schema_extra = {
             "example": {
-                "ingredient_id": "pasta_macaroni",
+                "_id": "pasta_macaroni",
             }
         }
 
@@ -23,6 +23,6 @@ class UpdateIngredientModel(BaseModel):
     class Config:
         schema_extra = {
             "example": {
-                "ingredient_id": "pasta_tagliatelle",
+                "_id": "pasta_tagliatelle",
             }
         }

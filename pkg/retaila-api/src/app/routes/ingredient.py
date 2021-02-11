@@ -1,15 +1,15 @@
 from fastapi import APIRouter, Body
 from fastapi.encoders import jsonable_encoder
 
-from src.app.database.ingredient import (
+from src.app.database.logic.ingredient import (
     add_ingredient,
     delete_ingredient,
     retrieve_ingredient,
     retrieve_ingredients,
     update_ingredient,
 )
-from src.app.models.model_base import ResponseModel, ErrorResponseModel
-from src.app.models.ingredient import (
+from src.app.database.models.model_base import ResponseModel, ErrorResponseModel
+from src.app.database.models.ingredient import (
     IngredientSchema,
     UpdateIngredientModel,
 )
