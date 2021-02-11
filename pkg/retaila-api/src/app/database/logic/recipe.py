@@ -39,8 +39,7 @@ async def retrieve_recipe(id: str) -> dict:
 async def add_recipe(recipe_data: dict) -> Type[ResultGeneric]:
     result = ResultGeneric
     result.status = True
-    result.error_message = []
-    result.data = None
+
 
     # Check if the ingredients of the recipe exists in the database
     for ingredient in recipe_data.get("ingredients"):

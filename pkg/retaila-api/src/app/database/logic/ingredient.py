@@ -1,7 +1,5 @@
 from typing import Type
-
 from pymongo.errors import DuplicateKeyError
-
 from src.app.database.database import database, ResultGeneric, checkEmptyBodyRequest
 
 ingredient_collection = database.get_collection("ingredients_collection")

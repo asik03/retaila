@@ -11,6 +11,20 @@ from src.app.database.logic.ingredient import ingredient_collection
 product_collection = database.get_collection("products_collection")
 
 
+def product_helper(product) -> dict:
+    return {
+        "id": str(product["_id"]),
+        "product_name": product["product_name"],
+        "ingredient_key": product["ingredient_key"],
+        "brand": product["brand"],
+        "category": product["category"],
+        "quantity": product["quantity"],
+        "calories": product["calories"],
+        "eco": product["eco"],
+        "bio": product["bio"],
+    }
+
+
 # Retrieve all products present in the database
 async def retrieve_products():
     products = []
@@ -88,6 +102,9 @@ async def update_product(id: str, product_data: dict):
 
     # Check if the ingredient_key exists in the database
     ingredient_key = product_data.get("ingredient_key")
+    # TODO: check
+    result = check_value_in_other_collection(collection="ingredient", id=ingredient_key, result=result)
+
     if not await ingredient_collection.find_one({"ingredient_key": ingredient_key}):
         result.error_message.append("The ingredient {} doesn't exists in the database".format(ingredient_key))
         result.status = False
@@ -117,7 +134,8 @@ async def update_product(id: str, product_data: dict):
         result.data = product_helper(product_updated)
     else:
         result.status = False
-        result.error_message.append("There was a problem while updating the product with id {} into the database".format(id))
+        result.error_message.append(
+            "There was a problem while updating the product with id {} into the database".format(id))
     return result
 
 
@@ -129,15 +147,19 @@ async def delete_product(id: str):
         return True
 
 
-def product_helper(product) -> dict:
-    return {
-        "id": str(product["_id"]),
-        "product_name": product["product_name"],
-        "ingredient_key": product["ingredient_key"],
-        "brand": product["brand"],
-        "category": product["category"],
-        "quantity": product["quantity"],
-        "calories": product["calories"],
-        "eco": product["eco"],
-        "bio": product["bio"],
+# Check if exists a value of another collection
+# collection: class, object, table or collection from where is checked
+# id: name of the element to be checked
+# result: a result generic object
+def check_value_in_other_collection(collection, id, result):
+    my_dict = {
+        'collection': collection + "_collection",
+        'key_name': collection + "_key"
     }
+
+    _collection = __import__(my_dict["collection"])
+
+    if not await _collection.find_one({my_dict["key_name"]: id}):
+        result.error_message.append("The {} {} doesn't exists in the database".format(collection, id))
+        result.status = False
+        return result

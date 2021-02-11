@@ -1,9 +1,14 @@
-from bson import ObjectId
+from typing import Type
 from pymongo.errors import DuplicateKeyError
-
 from src.app.database.database import database, ResultGeneric, checkEmptyBodyRequest
 
 category_collection = database.get_collection("categories_collection")
+
+
+def category_helper(category) -> dict:
+    return {
+        "id": str(category["_id"]),
+    }
 
 
 # Retrieve all categories present in the database
@@ -16,7 +21,7 @@ async def retrieve_categories():
 
 # Retrieve a category with a matching ID
 async def retrieve_category(id: str) -> dict:
-    category = await category_collection.find_one({"_id": ObjectId(id)})
+    category = await category_collection.find_one({"_id": id})
     if category:
         return category_helper(category)
 
@@ -52,7 +57,7 @@ async def update_category(id: str, category_data: dict):
         return result
 
     # Check if the category exists
-    category = await category_collection.find_one({"_id": ObjectId(id)})
+    category = await category_collection.find_one({"_id": id})
     if not category:
         result.error_message.append("Category id {} doesn't exist in the database.".format(id))
         result.status = False
@@ -60,11 +65,11 @@ async def update_category(id: str, category_data: dict):
 
     # Update the category
     updated_category = await category_collection.update_one(
-        {"_id": ObjectId(id)}, {"$set": category_data}
+        {"_id": id}, {"$set": category_data}
     )
     if updated_category:
         result.status = True
-        category_updated = await category_collection.find_one({"_id": ObjectId(id)})
+        category_updated = await category_collection.find_one({"_id": id})
         result.data = category_helper(category_updated)
     else:
         result.status = False
@@ -74,13 +79,9 @@ async def update_category(id: str, category_data: dict):
 
 # Delete a category from the database
 async def delete_category(id: str):
-    category = await category_collection.find_one({"_id": ObjectId(id)})
+    category = await category_collection.find_one({"_id": id})
     if category:
-        await category_collection.delete_one({"_id": ObjectId(id)})
+        await category_collection.delete_one({"_id": id})
         return True
 
 
-def category_helper(category) -> dict:
-    return {
-        "id": str(category["_id"]),
-    }
