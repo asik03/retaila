@@ -19,6 +19,7 @@ class ResultGeneric:
     data = None
     status = False
     error_message = []
+    code = None
 
 
 # Utils functions
