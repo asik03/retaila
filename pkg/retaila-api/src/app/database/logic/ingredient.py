@@ -58,7 +58,7 @@ async def update_ingredient(id: str, ingredient_data: dict):
     if not result.status:
         return result
 
-    # Check if the ingredient exists # TODO: update to new _id
+    # Check if the ingredient exists
     ingredient = await ingredient_collection.find_one({"_id": id})
     if not ingredient:
         result.error_message.append("Ingredient id {} doesn't exist in the database.".format(id))

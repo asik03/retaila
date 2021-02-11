@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Body
+from fastapi import APIRouter, Body, status
 from fastapi.encoders import jsonable_encoder
 
 from src.app.database.logic.ingredient import (
@@ -22,8 +22,16 @@ ingredient_router = APIRouter()
 async def get_ingredients():
     ingredients = await retrieve_ingredients()
     if ingredients:
-        return ResponseModel(ingredients, "Ingredients data retrieved successfully")
-    return ResponseModel(ingredients, "Empty list returned")
+        return ResponseModel(
+            code=status.HTTP_200_OK,
+            message="Ingredients data retrieved successfully",
+            data=ingredients
+        )
+    return ResponseModel(
+        code=status.HTTP_200_OK,
+        message="Empty list returned",
+        data=ingredients
+    )
 
 
 @ingredient_router.post("/",)
@@ -32,13 +40,14 @@ async def add_ingredient_data(ingredient: IngredientSchema = Body(...)):
     new_ingredient = await add_ingredient(ingredient)
     if new_ingredient.status:
         return ResponseModel(
-            new_ingredient.data,
-            "Ingredient added successfully.")
+            code=status.HTTP_201_CREATED,
+            message="Ingredient added successfully.",
+            data=new_ingredient.data,
+            )
     else:
         return ErrorResponseModel(
-            "An error occurred",
-            404,
-            new_ingredient.error_message,
+            code=status.HTTP_400_BAD_REQUEST,
+            error_message=new_ingredient.error_message,
         )
 
 
@@ -46,11 +55,15 @@ async def add_ingredient_data(ingredient: IngredientSchema = Body(...)):
 async def get_ingredient_data(id: str):
     ingredient = await retrieve_ingredient(id)
     if ingredient:
-        return ResponseModel(ingredient, "Ingredient data retrieved successfully")
+        return ResponseModel(
+            code=status.HTTP_200_OK,
+            data=ingredient,
+            message="Ingredient data retrieved successfully"
+        )
     return ErrorResponseModel(
-        "An error occurred.",
-        404,
-        "Ingredient doesn't exist.")
+        code=status.HTTP_404_NOT_FOUND,
+        error_message="Ingredient doesn't exist.",
+    )
 
 
 @ingredient_router.put("/{id}")
@@ -62,13 +75,12 @@ async def update_ingredient_data(id: str, req: UpdateIngredientModel = Body(...)
 
     if updated_ingredient.status:
         return ResponseModel(
-            "Ingredient with ID: {} name update is successful".format(id),
-            "Ingredient name updated successfully",
+            code=status.HTTP_200_OK,
+            message="Ingredient with ID: {} name update is successful".format(id),
         )
     return ErrorResponseModel(
-        "An error occurred",
-        404,
-        updated_ingredient.error_message,
+        code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+        error_message=updated_ingredient.error_message,
     )
 
 
@@ -77,10 +89,10 @@ async def delete_ingredient_data(id: str):
     deleted_ingredient = await delete_ingredient(id)
     if deleted_ingredient:
         return ResponseModel(
-            "Ingredient with ID: {} removed".format(id), "Ingredient deleted successfully"
+            code=status.HTTP_200_OK,
+            message="Ingredient with ID: {} removed".format(id),
         )
     return ErrorResponseModel(
-        "An error occurred",
-        404,
-        "Ingredient with id {0} doesn't exist".format(id)
+        code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+        error_message="Ingredient with id {0} doesn't exist".format(id)
     )
