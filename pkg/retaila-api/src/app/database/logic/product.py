@@ -3,7 +3,8 @@ from pymongo.errors import DuplicateKeyError
 
 from src.app.database.logic.brand import brand_collection
 from src.app.database.logic.category import category_collection
-from src.app.database.database import ResultGeneric, database, product_helper, checkEmptyBodyRequest
+from src.app.database.database import ResultGeneric, database, checkEmptyBodyRequest
+from src.app.database.models.product import product_helper
 from src.app.database.logic.ingredient import ingredient_collection
 
 product_collection = database.get_collection("products_collection")

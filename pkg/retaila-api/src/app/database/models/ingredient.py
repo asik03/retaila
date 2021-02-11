@@ -26,3 +26,9 @@ class UpdateIngredientModel(BaseModel):
                 "_id": "pasta_tagliatelle",
             }
         }
+
+
+def ingredient_helper(ingredient) -> dict:
+    return {
+        "id": str(ingredient["_id"]),
+    }

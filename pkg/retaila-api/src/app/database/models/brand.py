@@ -6,6 +6,14 @@ from typing import Optional
 from pydantic import BaseModel, Field
 
 
+def brand_helper(brand) -> dict:
+    print(str(brand))
+    return {
+        "id": str(brand["_id"]),
+        "super_private_brand": brand["super_private_brand"],
+    }
+
+
 # ellipsis "..." means that the Field is required. It could be replaced with None or a default value.
 class BrandSchema(BaseModel):
     brand_id: str = Field(alias="_id", description="Brand id")
@@ -31,3 +39,4 @@ class UpdateBrandModel(BaseModel):
                 "super_private_key": True,
             }
         }
+

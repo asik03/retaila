@@ -56,3 +56,17 @@ class UpdateProductModel(BaseModel):
                 "bio": True,
             }
         }
+
+
+def product_helper(product) -> dict:
+    return {
+        "id": str(product["_id"]),
+        "product_name": product["product_name"],
+        "ingredient_key": product["ingredient_key"],
+        "brand": product["brand"],
+        "category": product["category"],
+        "quantity": product["quantity"],
+        "calories": product["calories"],
+        "eco": product["eco"],
+        "bio": product["bio"],
+    }

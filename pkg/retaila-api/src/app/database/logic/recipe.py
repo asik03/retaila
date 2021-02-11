@@ -1,7 +1,8 @@
 from bson import ObjectId
 from pymongo.errors import DuplicateKeyError
 
-from src.app.database.database import database, recipe_helper, ResultGeneric, checkEmptyBodyRequest
+from src.app.database.database import database, ResultGeneric, checkEmptyBodyRequest
+from src.app.database.models.recipe import recipe_helper
 from src.app.database.logic.ingredient import ingredient_collection
 
 recipe_collection = database.get_collection("recipes_collection")
@@ -68,6 +69,13 @@ async def update_recipe(id: str, recipe_data: dict):
         result.error_message.append("Recipe id {} doesn't exist in the database.".format(id))
         result.status = False
         return result
+
+    # # Check if the author exists
+    # author_key = recipe_data.get("author_id")
+    # if not await author_collection.find_one({"_id": author_key}):
+    #     result.error_message.append("Author id {} doesn't exist in the database.".format(id))
+    #     result.status = False
+    #     return result
 
     # Check if the ingredients of the recipe exists in the database
     for ingredient in recipe_data.get("ingredients"):

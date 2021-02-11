@@ -27,3 +27,9 @@ class UpdateIngredientModel(BaseModel):
                 "category_id": "pasta",
             }
         }
+
+
+def category_helper(category) -> dict:
+    return {
+        "id": str(category["_id"]),
+    }

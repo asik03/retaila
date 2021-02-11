@@ -1,7 +1,8 @@
 from bson import ObjectId
 from pymongo.errors import DuplicateKeyError
 
-from src.app.database.database import database, category_helper, ResultGeneric, checkEmptyBodyRequest
+from src.app.database.database import database, ResultGeneric, checkEmptyBodyRequest
+from src.app.database.models.category import category_helper
 
 category_collection = database.get_collection("categories_collection")
 

@@ -13,6 +13,7 @@ class IngredientQuantity(BaseModel):
 # ellipsis "..." means that the Field is required. It could be replaced with None or a default value.
 class RecipeSchema(BaseModel):
     recipe_name: str
+    author: str
     ingredients: List[IngredientQuantity] = []  # Ingredients list, made of "ingredients key"
     steps: List[str] = []  # List of the steps or instructions to make the recipe.
     extra_notes: List[str] = []
@@ -21,6 +22,7 @@ class RecipeSchema(BaseModel):
         schema_extra = {
             "example": {
                 "recipe_name": "Pesto macaroni",
+                "author_id": "AsierAlcaideMartinez",
                 "ingredients": [
                     {
                         "ingredient_key": "pasta macaroni",
@@ -51,6 +53,7 @@ class UpdateRecipeModel(BaseModel):
         schema_extra = {
             "example": {
                 "recipe_name": "Pesto macaroni",
+                "author_id": "AsierAlcaideMartinez",
                 "ingredients": [
                     {
                         "ingredient_key": "pasta macaroni",
@@ -69,3 +72,14 @@ class UpdateRecipeModel(BaseModel):
                 "extra_notes": ["It is better to wait until the water turns 90ºC"],
             }
         }
+
+
+def recipe_helper(recipe) -> dict:
+    return {
+        "id": str(recipe["_id"]),
+        "recipe_name": recipe["recipe_name"],
+        "author": recipe["author_id"],
+        "ingredients": recipe["ingredients"],
+        "steps": recipe["steps"],
+        "extra_notes": recipe["extra_notes"],
+    }
