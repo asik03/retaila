@@ -1,9 +1,8 @@
-from typing import Type
-
 from bson import ObjectId
 from pymongo.errors import DuplicateKeyError
 
-from src.app.database.database import database, ResultGeneric, check_empty_body_request
+from src.app.database.database import database, ResultGeneric
+from src.app.database.utils import check_empty_body_request, check_pk_in_collection
 from src.app.database.logic.ingredient import ingredient_collection
 
 recipe_collection = database.get_collection("recipes_collection")
@@ -43,9 +42,10 @@ async def add_recipe(recipe_data: dict) -> ResultGeneric:
     # Check if the ingredients of the recipe exists in the database
     for ingredient in recipe_data.get("ingredients"):
         ingredient_key = ingredient.get("ingredient_key")
-        if not await ingredient_collection.find_one({"_id": ingredient_key}):
-            result.error_message.append("The ingredient {} doesn't exists in the database".format(ingredient_key))
-            result.status = False
+        result = check_pk_in_collection(object_type="ingredient", object_id=ingredient_key, result=result)
+        # if not await ingredient_collection.find_one({"_id": ingredient_key}):
+        #     result.error_message.append("The ingredient {} doesn't exists in the database".format(ingredient_key))
+        #     result.status = False
     if not result.status:
         # Return to avoid the updating
         return result
@@ -67,8 +67,8 @@ async def add_recipe(recipe_data: dict) -> ResultGeneric:
 
 
 # Update a recipe with a matching ID
-async def update_recipe(id: str, recipe_data: dict):
-    result = ResultGeneric
+async def update_recipe(_id: str, recipe_data: dict):
+    result = ResultGeneric()
     result.status = True
 
     # Check if an empty request body is sent.
@@ -77,13 +77,19 @@ async def update_recipe(id: str, recipe_data: dict):
         return result
 
     # Check if the recipe exists
-    if not await recipe_collection.find_one({"_id": ObjectId(id)}):
-        result.error_message.append("Recipe id {} doesn't exist in the database.".format(id))
-        result.status = False
+    result = check_pk_in_collection(object_type="recipe", object_id=_id, result=result)
+    # if not await recipe_collection.find_one({"_id": ObjectId(_id)}):
+    #     result.error_message.append("Recipe id {} doesn't exist in the database.".format(_id))
+    #     result.status = False
+    #     return result
+    if not result.status:
         return result
 
     # # Check if the author exists
-    # author_key = recipe_data.get("author_id")
+    author_key = recipe_data.get("author_id")
+    result = check_pk_in_collection(object_type="author", object_id=author_key, result=result)
+    if not result.status:
+        return result
     # if not await author_collection.find_one({"_id": author_key}):
     #     result.error_message.append("Author id {} doesn't exist in the database.".format(id))
     #     result.status = False
@@ -92,32 +98,43 @@ async def update_recipe(id: str, recipe_data: dict):
     # Check if the ingredients of the recipe exists in the database
     for ingredient in recipe_data.get("ingredients"):
         ingredient_key = ingredient.get("ingredient_key")
-        if not await ingredient_collection.find_one({"_id": ingredient_key}):
-            result.error_message.append("The ingredient {} doesn't exists in the database".format(ingredient_key))
-            result.status = False
+        result = check_pk_in_collection(object_type="ingredient", object_id=ingredient_key, result=result)
+
+        # if not await ingredient_collection.find_one({"_id": ingredient_key}):
+        #     result.error_message.append("The ingredient {} doesn't exists in the database".format(ingredient_key))
+        #     result.status = False
     if not result.status:
         # Return to avoid the updating
         return result
 
     # Update the recipe
     updated_recipe = await recipe_collection.update_one(
-        {"_id": ObjectId(id)}, {"$set": recipe_data}
+        {"_id": ObjectId(_id)}, {"$set": recipe_data}
     )
     if updated_recipe:
         result.status = True
-        recipe_updated = await recipe_collection.find_one({"_id": ObjectId(id)})
+        recipe_updated = await recipe_collection.find_one({"_id": ObjectId(_id)})
         result.data = recipe_helper(recipe_updated)
     else:
         result.status = False
-        result.error_message.append("There was a problem while updating the recipe with id {} into the database".format(id))
+        result.error_message.append("There was a problem while updating the recipe with id {} into the database".format(_id))
     return result
 
 
-# Delete a recipe from the database
-async def delete_recipe(id: str):
-    recipe = await recipe_collection.find_one({"_id": ObjectId(id)})
-    if recipe:
-        await recipe_collection.delete_one({"_id": ObjectId(id)})
-        return True
+async def delete_recipe(_id: str):
+    # Delete a recipe from the database
+    result = ResultGeneric()
+    result.status = True
+
+    # Delete recipe
+    if await recipe_collection.find_one({"_id": _id}):
+        await recipe_collection.delete_one({"_id": _id})
+        result.status = True
+        return result
+    else:
+        result.status = False
+        result.error_message.append("Couldn't find the recipe ID to delete")
+
+
 
 

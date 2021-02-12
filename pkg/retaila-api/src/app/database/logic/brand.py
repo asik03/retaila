@@ -1,8 +1,7 @@
-from typing import Type
-
 from pymongo.errors import DuplicateKeyError
 
-from src.app.database.database import database, ResultGeneric, check_empty_body_request
+from src.app.database.database import database, ResultGeneric
+from src.app.database.utils import check_empty_body_request, check_pk_in_collection
 
 brand_collection = database.get_collection("brands_collection")
 
@@ -24,8 +23,8 @@ async def retrieve_brands():
 
 
 # Retrieve a brand with a matching ID
-async def retrieve_brand(id: str) -> dict:
-    brand = await brand_collection.find_one({"_id": id})
+async def retrieve_brand(_id: str) -> dict:
+    brand = await brand_collection.find_one({"_id": _id})
     if brand:
         return brand_helper(brand)
 
@@ -51,7 +50,7 @@ async def add_brand(brand_data: dict) -> ResultGeneric:
 
 
 # Update a brand with a matching ID
-async def update_brand(id: str, brand_data: dict):
+async def update_brand(_id: str, brand_data: dict):
     result = ResultGeneric()
     result.status = True
 
@@ -61,31 +60,39 @@ async def update_brand(id: str, brand_data: dict):
         return result
 
     # Check if the brand exists
-    brand = await brand_collection.find_one({"_id": id})
-    if not brand:
-        result.error_message.append("Brand id {} doesn't exist in the database.".format(id))
-        result.status = False
-        return result
+    result = check_pk_in_collection(object_type="brand", object_id=_id, result=result)
+    # brand = await brand_collection.find_one({"_id": _id})
+    # if not brand:
+    #     result.error_message.append("Brand id {} doesn't exist in the database.".format(_id))
+    #     result.status = False
+    #     return result
 
     # Update the brand
     updated_brand = await brand_collection.update_one(
-        {"_id": id}, {"$set": brand_data}
+        {"_id": _id}, {"$set": brand_data}
     )
     if updated_brand:
         result.status = True
-        brand_updated = await brand_collection.find_one({"_id": id})
+        brand_updated = await brand_collection.find_one({"_id": _id})
         result.data = brand_helper(brand_updated)
     else:
         result.status = False
         result.error_message.append(
-            "There was a problem while updating the brand with id {} into the database".format(id))
+            "There was a problem while updating the brand with id {} into the database".format(_id))
     return result
 
 
 # Delete a brand from the database
-async def delete_brand(id: str):
-    brand = await brand_collection.find_one({"_id": id})
-    if brand:
-        await brand_collection.delete_one({"_id": id})
-        return True
+async def delete_brand(_id: str):
+    result = ResultGeneric()
+    result.status = True
+
+    # Delete brand
+    if await brand_collection.find_one({"_id": _id}):
+        await brand_collection.delete_one({"_id": _id})
+        result.status = True
+        return result
+    else:
+        result.status = False
+        result.error_message.append("Couldn't find the brand ID to delete")
 

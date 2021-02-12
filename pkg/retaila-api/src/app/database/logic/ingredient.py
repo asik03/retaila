@@ -1,6 +1,7 @@
 from typing import Type
 from pymongo.errors import DuplicateKeyError
-from src.app.database.database import database, ResultGeneric, check_empty_body_request
+from src.app.database.database import database, ResultGeneric
+from src.app.database.utils import check_empty_body_request, check_pk_in_collection
 
 ingredient_collection = database.get_collection("ingredients_collection")
 
@@ -20,15 +21,15 @@ async def retrieve_ingredients():
 
 
 # Retrieve a ingredient with a matching ID
-async def retrieve_ingredient(id: str) -> dict:
-    ingredient = await ingredient_collection.find_one({"_id": id})
+async def retrieve_ingredient(_id: str) -> dict:
+    ingredient = await ingredient_collection.find_one({"_id": _id})
     if ingredient:
         return ingredient_helper(ingredient)
 
 
 # Add a new ingredient into to the database
 async def add_ingredient(ingredient_data: dict) -> ResultGeneric:
-    result = ResultGeneric
+    result = ResultGeneric()
     result.status = True
 
     try:
@@ -47,7 +48,7 @@ async def add_ingredient(ingredient_data: dict) -> ResultGeneric:
 
 
 # Update a ingredient with a matching ID
-async def update_ingredient(id: str, ingredient_data: dict):
+async def update_ingredient(_id: str, ingredient_data: dict):
     result = ResultGeneric
     result.status = True
 
@@ -57,31 +58,41 @@ async def update_ingredient(id: str, ingredient_data: dict):
         return result
 
     # Check if the ingredient exists
-    ingredient = await ingredient_collection.find_one({"_id": id})
-    if not ingredient:
-        result.error_message.append("Ingredient id {} doesn't exist in the database.".format(id))
-        result.status = False
-        return result
+    result = check_pk_in_collection(object_type="ingredient", object_id=_id, result=result)
+    # ingredient = await ingredient_collection.find_one({"_id": _id})
+    # if not ingredient:
+    #     result.error_message.append("Ingredient id {} doesn't exist in the database.".format(_id))
+    #     result.status = False
+    #     return result
 
     # Update the ingredient
     updated_ingredient = await ingredient_collection.update_one(
-        {"_id": id}, {"$set": ingredient_data}
+        {"_id": _id}, {"$set": ingredient_data}
     )
     if updated_ingredient:
         result.status = True
-        ingredient_updated = await ingredient_collection.find_one({"_id": id})
+        ingredient_updated = await ingredient_collection.find_one({"_id": _id})
         result.data = ingredient_helper(ingredient_updated)
     else:
         result.status = False
-        result.error_message.append("There was a problem while updating the ingredient with id {} into the database".format(id))
+        result.error_message.append("There was a problem while updating the ingredient with id {} into the database".format(_id))
     return result
 
 
-# Delete a ingredient from the database
-async def delete_ingredient(id: str):
-    ingredient = await ingredient_collection.find_one({"_id": id})
-    if ingredient:
-        await ingredient_collection.delete_one({"_id": id})
-        return True
+async def delete_ingredient(_id: str):
+    # Delete a ingredient from the database
+    result = ResultGeneric()
+    result.status = True
+
+    # Delete ingredient
+    if await ingredient_collection.find_one({"_id": _id}):
+        await ingredient_collection.delete_one({"_id": _id})
+        result.status = True
+        return result
+    else:
+        result.status = False
+        result.error_message.append("Couldn't find the ingredient ID to delete")
+
+
 
 

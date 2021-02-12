@@ -1,6 +1,7 @@
 from typing import Type
 from pymongo.errors import DuplicateKeyError
-from src.app.database.database import database, ResultGeneric, check_empty_body_request
+from src.app.database.database import database, ResultGeneric
+from src.app.database.utils import check_empty_body_request, check_pk_in_collection
 
 category_collection = database.get_collection("categories_collection")
 
@@ -20,8 +21,8 @@ async def retrieve_categories():
 
 
 # Retrieve a category with a matching ID
-async def retrieve_category(id: str) -> dict:
-    category = await category_collection.find_one({"_id": id})
+async def retrieve_category(_id: str) -> dict:
+    category = await category_collection.find_one({"_id": _id})
     if category:
         return category_helper(category)
 
@@ -47,8 +48,8 @@ async def add_category(category_data: dict) -> ResultGeneric:
 
 
 # Update a category with a matching ID
-async def update_category(id: str, category_data: dict):
-    result = ResultGeneric
+async def update_category(_id: str, category_data: dict):
+    result = ResultGeneric()
     result.status = True
 
     # Check if an empty request body is sent.
@@ -57,31 +58,41 @@ async def update_category(id: str, category_data: dict):
         return result
 
     # Check if the category exists
-    category = await category_collection.find_one({"_id": id})
+    result = check_pk_in_collection(object_type="category", object_id=_id, result=result)
+    category = await category_collection.find_one({"_id": _id})
     if not category:
-        result.error_message.append("Category id {} doesn't exist in the database.".format(id))
+        result.error_message.append("Category id {} doesn't exist in the database.".format(_id))
         result.status = False
         return result
 
     # Update the category
     updated_category = await category_collection.update_one(
-        {"_id": id}, {"$set": category_data}
+        {"_id": _id}, {"$set": category_data}
     )
     if updated_category:
         result.status = True
-        category_updated = await category_collection.find_one({"_id": id})
+        category_updated = await category_collection.find_one({"_id": _id})
         result.data = category_helper(category_updated)
     else:
         result.status = False
-        result.error_message.append("There was a problem while updating the category with id {} into the database".format(id))
+        result.error_message.append("There was a problem while updating the category with id {} into the database".format(_id))
     return result
 
 
-# Delete a category from the database
-async def delete_category(id: str):
-    category = await category_collection.find_one({"_id": id})
-    if category:
-        await category_collection.delete_one({"_id": id})
-        return True
+async def delete_category(_id: str):
+    # Delete a category from the database
+    result = ResultGeneric()
+    result.status = True
+
+    # Delete category
+    if await category_collection.find_one({"_id": _id}):
+        await category_collection.delete_one({"_id": _id})
+        result.status = True
+        return result
+    else:
+        result.status = False
+        result.error_message.append("Couldn't find the category ID to delete")
+
+
 
 

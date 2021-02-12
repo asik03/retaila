@@ -21,15 +21,3 @@ class ResultGeneric:
         self.code = None
         self.data = None
         self.error_message = []
-
-
-# Utils functions
-def check_empty_body_request(data, result):
-    # Check if an empty request body is sent.
-    if len(data) < 1:
-        result.status = False
-        result.error_message.append("An empty request body is sent")
-    else:
-        result.status = True
-
-    return result
