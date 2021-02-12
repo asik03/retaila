@@ -2,7 +2,7 @@ from typing import Type
 
 from pymongo.errors import DuplicateKeyError
 
-from src.app.database.database import database, ResultGeneric, checkEmptyBodyRequest
+from src.app.database.database import database, ResultGeneric, check_empty_body_request
 
 brand_collection = database.get_collection("brands_collection")
 
@@ -31,8 +31,8 @@ async def retrieve_brand(id: str) -> dict:
 
 
 # Add a new brand into to the database
-async def add_brand(brand_data: dict) -> Type[ResultGeneric]:
-    result = ResultGeneric
+async def add_brand(brand_data: dict) -> ResultGeneric:
+    result = ResultGeneric()
     result.status = True
 
     try:
@@ -56,21 +56,14 @@ async def update_brand(id: str, brand_data: dict):
     result.status = True
 
     # Check if an empty request body is sent.
-    result = checkEmptyBodyRequest(brand_data)
+    result = check_empty_body_request(brand_data)
     if not result.status:
         return result
 
-    # Check if the brand exists # TODO: change this with new _id format
+    # Check if the brand exists
     brand = await brand_collection.find_one({"_id": id})
     if not brand:
         result.error_message.append("Brand id {} doesn't exist in the database.".format(id))
-        result.status = False
-        return result
-
-    # Check if the brand_id has the same name of the the brand_id to be updated
-    if not brand.get("brand_id") == brand_data.get("brand_id"):
-        result.error_message.append(
-            "brand_id {} is not the same as the one with the id {} in the database.".format(brand.get("brand_id"), id))
         result.status = False
         return result
 

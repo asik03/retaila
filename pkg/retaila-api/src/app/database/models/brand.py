@@ -21,7 +21,7 @@ class BrandSchema(BaseModel):
 
 
 class UpdateBrandModel(BaseModel):
-    id: str = Field(alias="_id", description="Brand id")
+    brand_id: str = Field(alias="_id", description="Brand id")
     super_private_brand: Optional[bool]
 
     class Config:

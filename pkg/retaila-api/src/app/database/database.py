@@ -16,15 +16,15 @@ database = client.Retaila
 
 # Utils classes
 class ResultGeneric:
-    data = None
-    status = False
-    error_message = []
-    code = None
+    def __init__(self):
+        self.status = False
+        self.code = None
+        self.data = None
+        self.error_message = []
 
 
 # Utils functions
-def checkEmptyBodyRequest(data):
-    result = ResultGeneric()
+def check_empty_body_request(data, result):
     # Check if an empty request body is sent.
     if len(data) < 1:
         result.status = False

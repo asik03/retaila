@@ -3,7 +3,7 @@ from typing import Type
 from bson import ObjectId
 from pymongo.errors import DuplicateKeyError
 
-from src.app.database.database import database, ResultGeneric, checkEmptyBodyRequest
+from src.app.database.database import database, ResultGeneric, check_empty_body_request
 from src.app.database.logic.ingredient import ingredient_collection
 
 recipe_collection = database.get_collection("recipes_collection")
@@ -13,7 +13,7 @@ def recipe_helper(recipe) -> dict:
     return {
         "id": str(recipe["_id"]),
         "recipe_name": recipe["recipe_name"],
-        "author": recipe["author_id"],
+        "author_key": recipe["author_key"],
         "ingredients": recipe["ingredients"],
         "steps": recipe["steps"],
         "extra_notes": recipe["extra_notes"],
@@ -36,10 +36,9 @@ async def retrieve_recipe(id: str) -> dict:
 
 
 # Add a new recipe into to the database
-async def add_recipe(recipe_data: dict) -> Type[ResultGeneric]:
-    result = ResultGeneric
+async def add_recipe(recipe_data: dict) -> ResultGeneric:
+    result = ResultGeneric()
     result.status = True
-
 
     # Check if the ingredients of the recipe exists in the database
     for ingredient in recipe_data.get("ingredients"):
@@ -73,7 +72,7 @@ async def update_recipe(id: str, recipe_data: dict):
     result.status = True
 
     # Check if an empty request body is sent.
-    result = checkEmptyBodyRequest(recipe_data)
+    result = check_empty_body_request(recipe_data)
     if not result.status:
         return result
 

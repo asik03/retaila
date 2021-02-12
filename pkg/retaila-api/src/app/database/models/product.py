@@ -9,8 +9,8 @@ from pydantic import BaseModel
 class ProductSchema(BaseModel):
     product_name: str
     ingredient_key: str  # Ingredient name registered in the database
-    brand: str  # TODO: check if exist brand
-    category: str  # TODO: check if exist category
+    brand_key: str
+    category_key: str
     quantity: int  # In grams
     calories: int  # KCalories per 100gr
     eco: bool = False  # Not needed, False by default
@@ -22,8 +22,8 @@ class ProductSchema(BaseModel):
             "example": {
                 "product_name": "Macaroni Barila 500gr",
                 "ingredient_key": "pasta_macaroni",
-                "brand": "Barila",
-                "category": "pasta",
+                "brand_key": "Barila",
+                "category_key": "pasta",
                 "quantity": 500,
                 "calories": 354,
                 "eco": False,
@@ -35,12 +35,12 @@ class ProductSchema(BaseModel):
 class UpdateProductModel(BaseModel):
     product_name: Optional[str]
     ingredient_key: Optional[str]  # Ingredient name registered in the database
-    brand: Optional[str]  # TODO: check if exist brand
-    category: Optional[str]  # TODO: check if exist category
+    brand_key: Optional[str]
+    category_key: Optional[str]
     quantity: Optional[int]  # In grams
     calories: Optional[int]  # KCalories per 100gr
-    eco: bool = Optional[False]  # Not needed, False by default
-    bio: bool = Optional[False]  # Not needed, False by default
+    eco: Optional[bool] = False  # Not needed, False by default
+    bio: Optional[bool] = False  # Not needed, False by default
     co2_footprint: Optional[int] = None  # Not needed, None by default
 
     class Config:
@@ -48,8 +48,8 @@ class UpdateProductModel(BaseModel):
             "example": {
                 "product_name": "Macaroni Barila 500gr",
                 "ingredient_key": "pasta_macaroni",
-                "brand": "Barila",
-                "category": "pasta",
+                "brand_key": "Barila",
+                "category_key": "pasta",
                 "quantity": 500,
                 "calories": 600,
                 "eco": False,

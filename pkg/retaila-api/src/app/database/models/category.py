@@ -11,18 +11,18 @@ class CategorySchema(BaseModel):
     class Config:
         schema_extra = {
             "example": {
-                "category_id": "pasta",
+                "_id": "pasta",
             }
         }
 
 
-class UpdateIngredientModel(BaseModel):
-    category_id: str = Field(alias="_id", description="Brand id")
+class UpdateCategoryModel(BaseModel):
+    category_id: str = Field(alias="_id", description="Category id")
 
     class Config:
         schema_extra = {
             "example": {
-                "category_id": "pasta",
+                "_id": "pasta",
             }
         }
 

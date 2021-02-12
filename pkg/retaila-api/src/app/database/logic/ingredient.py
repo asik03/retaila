@@ -1,6 +1,6 @@
 from typing import Type
 from pymongo.errors import DuplicateKeyError
-from src.app.database.database import database, ResultGeneric, checkEmptyBodyRequest
+from src.app.database.database import database, ResultGeneric, check_empty_body_request
 
 ingredient_collection = database.get_collection("ingredients_collection")
 
@@ -27,7 +27,7 @@ async def retrieve_ingredient(id: str) -> dict:
 
 
 # Add a new ingredient into to the database
-async def add_ingredient(ingredient_data: dict) -> Type[ResultGeneric]:
+async def add_ingredient(ingredient_data: dict) -> ResultGeneric:
     result = ResultGeneric
     result.status = True
 
@@ -52,7 +52,7 @@ async def update_ingredient(id: str, ingredient_data: dict):
     result.status = True
 
     # Check if an empty request body is sent.
-    result = checkEmptyBodyRequest(ingredient_data)
+    result = check_empty_body_request(ingredient_data)
     if not result.status:
         return result
 

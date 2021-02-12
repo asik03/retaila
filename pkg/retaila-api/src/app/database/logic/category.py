@@ -1,6 +1,6 @@
 from typing import Type
 from pymongo.errors import DuplicateKeyError
-from src.app.database.database import database, ResultGeneric, checkEmptyBodyRequest
+from src.app.database.database import database, ResultGeneric, check_empty_body_request
 
 category_collection = database.get_collection("categories_collection")
 
@@ -27,8 +27,8 @@ async def retrieve_category(id: str) -> dict:
 
 
 # Add a new category into to the database
-async def add_category(category_data: dict) -> Type[ResultGeneric]:
-    result = ResultGeneric
+async def add_category(category_data: dict) -> ResultGeneric:
+    result = ResultGeneric()
     result.status = True
 
     try:
@@ -52,7 +52,7 @@ async def update_category(id: str, category_data: dict):
     result.status = True
 
     # Check if an empty request body is sent.
-    result = checkEmptyBodyRequest(category_data)
+    result = check_empty_body_request(category_data)
     if not result.status:
         return result
 

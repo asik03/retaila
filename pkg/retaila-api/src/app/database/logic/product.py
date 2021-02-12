@@ -5,7 +5,7 @@ from pymongo.errors import DuplicateKeyError
 
 from src.app.database.logic.brand import brand_collection
 from src.app.database.logic.category import category_collection
-from src.app.database.database import ResultGeneric, database, checkEmptyBodyRequest
+from src.app.database.database import ResultGeneric, database, check_empty_body_request
 from src.app.database.logic.ingredient import ingredient_collection
 
 product_collection = database.get_collection("products_collection")
@@ -16,9 +16,9 @@ def product_helper(product) -> dict:
         "id": str(product["_id"]),
         "product_name": product["product_name"],
         "ingredient_key": product["ingredient_key"],
-        "brand": product["brand"],
-        "category": product["category"],
-        "quantity": product["quantity"],
+        "brand_key": product["brand_key"],
+        "category_key": product["category_key"],
+        "quantity_key": product["quantity"],
         "calories": product["calories"],
         "eco": product["eco"],
         "bio": product["bio"],
@@ -41,27 +41,27 @@ async def retrieve_product(id: str) -> dict:
 
 
 # Add a new product into to the database
-async def add_product(product_data: dict) -> Type[ResultGeneric]:
-    result = ResultGeneric
+async def add_product(product_data: dict) -> ResultGeneric:
+    result = ResultGeneric()
     result.status = True
 
     # Check if the ingredient_key exists in the database
     ingredient_key = product_data.get("ingredient_key")
-    if not await ingredient_collection.find_one({"ingredient_key": ingredient_key}):
+    if not await ingredient_collection.find_one({"_id": ingredient_key}):
         result.error_message.append("The ingredient {} doesn't exists in the database".format(ingredient_key))
         result.status = False
         return result
 
-    # Check if the brand_name_key exists in the database
-    brand_name_key = product_data.get("brand_name_key")
-    if not await brand_collection.find_one({"brand_name_key": brand_name_key}):
-        result.error_message.append("The brand_name_key {} doesn't exists in the database".format(brand_name_key))
+    # Check if the brand_key exists in the database
+    brand_key = product_data.get("brand_key")
+    if not await brand_collection.find_one({"_id": brand_key}):
+        result.error_message.append("The Category {} doesn't exists in the database".format(brand_key))
         result.status = False
         return result
 
     # Check if the category_key exists in the database
     category_key = product_data.get("category_key")
-    if not await category_collection.find_one({"category_key": category_key}):
+    if not await category_collection.find_one({"_id": category_key}):
         result.error_message.append("The category_key {} doesn't exists in the database".format(category_key))
         result.status = False
         return result
@@ -90,7 +90,7 @@ async def update_product(id: str, product_data: dict):
     result.status = True
 
     # Check if an empty request body is sent.
-    result = checkEmptyBodyRequest(product_data)
+    result = check_empty_body_request(product_data, result)
     if not result.status:
         return result
 
@@ -103,23 +103,24 @@ async def update_product(id: str, product_data: dict):
     # Check if the ingredient_key exists in the database
     ingredient_key = product_data.get("ingredient_key")
     # TODO: check
-    result = check_value_in_other_collection(collection="ingredient", id=ingredient_key, result=result)
+    result = check_value_in_other_collection(type="ingredient", id=ingredient_key, result=result)
 
-    if not await ingredient_collection.find_one({"ingredient_key": ingredient_key}):
-        result.error_message.append("The ingredient {} doesn't exists in the database".format(ingredient_key))
-        result.status = False
-        return result
+    # if not await ingredient_collection.find_one({"ingredient_key": ingredient_key}):
+    #     result.error_message.append("The ingredient {} doesn't exists in the database".format(ingredient_key))
+    #     result.status = False
+    #     return result
 
-    # Check if the brand_name_key exists in the database
-    brand_name_key = product_data.get("brand_name_key")
-    if not await brand_collection.find_one({"brand_name_key": brand_name_key}):
-        result.error_message.append("The brand_name_key {} doesn't exists in the database".format(brand_name_key))
+
+    brand_key = product_data.get("brand_key")
+    if not await brand_collection.find_one({"_id": brand_key}):
+        result.error_message.append("The brand_key {} doesn't exists in the database".format(ingredient_key))
         result.status = False
         return result
 
     # Check if the category_key exists in the database
     category_key = product_data.get("category_key")
-    if not await category_collection.find_one({"category_key": category_key}):
+    # result = check_value_in_other_collection(collection="category", id=category_key, result=result)
+    if not await category_collection.find_one({"_id": category_key}):
         result.error_message.append("The category_key {} doesn't exists in the database".format(category_key))
         result.status = False
         return result
@@ -151,15 +152,18 @@ async def delete_product(id: str):
 # collection: class, object, table or collection from where is checked
 # id: name of the element to be checked
 # result: a result generic object
-def check_value_in_other_collection(collection, id, result):
+def check_value_in_other_collection(type, id, result):
     my_dict = {
-        'collection': collection + "_collection",
-        'key_name': collection + "_key"
+        'collection': [type + "_collection"],
+        'key_name': type + "_key",
+        'import_from_list': "src.app.database.logic." + type
     }
 
-    _collection = __import__(my_dict["collection"])
-
-    if not await _collection.find_one({my_dict["key_name"]: id}):
-        result.error_message.append("The {} {} doesn't exists in the database".format(collection, id))
+    _type = __import__(my_dict['import_from_list'], globals(), locals(), my_dict['collection'], 0)
+    _collection = _type.ingredient_collection
+    if not _collection.find_one({"_id": id}):
+        result.error_message.append("The {} {} doesn't exist in the database".format(type, id))
         result.status = False
+        return result
+    else:
         return result

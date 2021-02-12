@@ -1,7 +1,9 @@
 from fastapi import FastAPI, APIRouter
 
 from src.app.routes.brand import brand_router
+from src.app.routes.category import category_router
 from src.app.routes.ingredient import ingredient_router
+from src.app.routes.product import product_router
 from src.app.routes.recipe import recipe_router
 
 api_name = "Retaila"
@@ -24,9 +26,11 @@ api_name = "Retaila"
 app = FastAPI()
 router = APIRouter()
 
-app.include_router(recipe_router, tags=["Recipe"], prefix="/recipe")
-app.include_router(ingredient_router, tags=["Ingredient"], prefix="/ingredient")
 app.include_router(brand_router, tags=["Brand"], prefix="/brand")
+app.include_router(category_router, tags=["Category"], prefix="/category")
+app.include_router(ingredient_router, tags=["Ingredient"], prefix="/ingredient")
+app.include_router(product_router, tags=["Product"], prefix="/product")
+app.include_router(recipe_router, tags=["Recipe"], prefix="/recipe")
 
 
 # Tags are identifiers used to group routes. Routes with the same tags are grouped into a section on the API
