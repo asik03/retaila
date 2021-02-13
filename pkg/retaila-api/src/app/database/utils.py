@@ -26,7 +26,7 @@ async def check_pk_in_collection(object_type, object_id, result):
     my_dict = {
         'collection': object_type + "_collection",
         'key_name': object_type + "_key",
-        'import_from_list': "src.app.database.logic." + object_type
+        'import_from_list': "app.database.logic." + object_type
     }
 
     _module = __import__(my_dict['import_from_list'], globals(), locals(), my_dict['collection'], 0)

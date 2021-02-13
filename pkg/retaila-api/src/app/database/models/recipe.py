@@ -37,7 +37,11 @@ class RecipeSchema(BaseModel):
                         "quantity": 4
                     }
                 ],
-                "steps": ["Boil the water", "Put the pasta and wait 5 mins", "Put the sauce into the pasta. Voila"],
+                "steps": [
+                    "Boil the water",
+                    "Put the pasta and wait 5 mins",
+                    "Put the sauce into the pasta. Voila"
+                ],
                 "extra_notes": ["It is better to wait until the water turns 90ºC"],
             }
         }
@@ -69,7 +73,11 @@ class UpdateRecipeModel(BaseModel):
                         "quantity": 4
                     }
                 ],
-                "steps": ["Boil the water", "Put the pasta and wait 5 mins", "Put the sauce into the pasta. Voila"],
+                "steps": [
+                    "Boil the water",
+                    "Put the pasta and wait 5 mins",
+                    "Put the sauce into the pasta. Voila"
+                ],
                 "extra_notes": ["It is better to wait until the water turns 90ºC"],
             }
         }

@@ -1,7 +1,7 @@
 from pymongo.errors import DuplicateKeyError
 
-from src.app.database.database import database, ResultGeneric
-from src.app.database.utils import check_empty_body_request, check_pk_in_collection
+from app.database.database import database, ResultGeneric
+from app.database.utils import check_empty_body_request, check_pk_in_collection
 
 brand_collection = database.get_collection("brands_collection")
 

@@ -1,18 +1,9 @@
 from fastapi import APIRouter, Body, status
 from fastapi.encoders import jsonable_encoder
 
-from src.app.database.logic.recipe import (
-    add_recipe,
-    delete_recipe,
-    retrieve_recipe,
-    retrieve_recipes,
-    update_recipe,
-)
-from src.app.database.models.model_base import ResponseModel, ErrorResponseModel
-from src.app.database.models.recipe import (
-    RecipeSchema,
-    UpdateRecipeModel,
-)
+from app.database.logic.recipe import retrieve_recipes, add_recipe, retrieve_recipe, update_recipe, delete_recipe
+from app.database.models.model_base import ResponseModel, ErrorResponseModel
+from app.database.models.recipe import RecipeSchema, UpdateRecipeModel
 
 recipe_router = APIRouter()
 

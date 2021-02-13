@@ -1,13 +1,9 @@
 from fastapi import APIRouter, Body, status
 from fastapi.encoders import jsonable_encoder
 
-from src.app.database.logic.product import (
-
-    retrieve_product, add_product, delete_product, update_product, retrieve_products)
-from src.app.database.models.model_base import ResponseModel, ErrorResponseModel
-from src.app.database.models.product import (
-    ProductSchema, UpdateProductModel
-)
+from app.database.logic.product import retrieve_products, add_product, retrieve_product, update_product, delete_product
+from app.database.models.model_base import ResponseModel, ErrorResponseModel
+from app.database.models.product import ProductSchema, UpdateProductModel
 
 product_router = APIRouter()
 

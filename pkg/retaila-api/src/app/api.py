@@ -1,10 +1,10 @@
 from fastapi import FastAPI, APIRouter
 
-from src.app.routes.brand import brand_router
-from src.app.routes.category import category_router
-from src.app.routes.ingredient import ingredient_router
-from src.app.routes.product import product_router
-from src.app.routes.recipe import recipe_router
+from app.routes.brand import brand_router
+from app.routes.category import category_router
+from app.routes.ingredient import ingredient_router
+from app.routes.product import product_router
+from app.routes.recipe import recipe_router
 
 api_name = "Retaila"
 
@@ -38,3 +38,8 @@ app.include_router(recipe_router, tags=["Recipe"], prefix="/recipe")
 @app.get("/", tags=["root"])
 async def read_root() -> dict:
     return {"message": "Welcome to " + api_name + " API!!."}
+
+
+@app.get("/health", tags=["health"])
+async def read_root() -> dict:
+    return {"ping": "pong!"}

@@ -1,11 +1,8 @@
 from bson import ObjectId
 from pymongo.errors import DuplicateKeyError
 
-from src.app.database.logic.brand import brand_collection
-from src.app.database.logic.category import category_collection
-from src.app.database.database import ResultGeneric, database
-from src.app.database.utils import check_empty_body_request, check_pk_in_collection
-from src.app.database.logic.ingredient import ingredient_collection
+from app.database.database import ResultGeneric, database
+from app.database.utils import check_empty_body_request, check_pk_in_collection
 
 product_collection = database.get_collection("products_collection")
 
@@ -17,7 +14,7 @@ def product_helper(product) -> dict:
         "ingredient_key": product["ingredient_key"],
         "brand_key": product["brand_key"],
         "category_key": product["category_key"],
-        "quantity_key": product["quantity"],
+        "quantity": product["quantity"],
         "calories": product["calories"],
         "eco": product["eco"],
         "bio": product["bio"],
