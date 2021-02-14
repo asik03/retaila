@@ -2,7 +2,7 @@ from bson import ObjectId
 from pymongo.errors import DuplicateKeyError
 
 from app.database.database import ResultGeneric, database
-from app.database.utils import check_empty_body_request, check_pk_in_collection
+from app.database.utils import check_empty_body_request, check_pk_in_collection, delete_item
 
 product_collection = database.get_collection("products_collection")
 
@@ -142,17 +142,7 @@ async def update_product(_id: str, product_data: dict):
     return result
 
 
+# Delete a product from the database
 async def delete_product(_id: str):
-    # Delete a product from the database
-    result = ResultGeneric()
-    result.status = True
-
-    # Delete product
-    if await product_collection.find_one({"_id": _id}):
-        await product_collection.delete_one({"_id": _id})
-        result.status = True
-        return result
-    else:
-        result.status = False
-        result.error_message.append("Couldn't find the product ID to delete")
+    return await delete_item(_id=_id, collection=product_collection)
 

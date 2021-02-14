@@ -1,9 +1,11 @@
 from fastapi import APIRouter, Body, status
 from fastapi.encoders import jsonable_encoder
 
-from app.database.logic.brand import add_brand, retrieve_brands, retrieve_brand, update_brand, delete_brand
+from app.database.logic.brand import add_brand, retrieve_brands, retrieve_brand, update_brand, \
+    brand_collection, delete_brand
 from app.database.models.brand import BrandSchema, UpdateBrandModel
 from app.database.models.model_base import ResponseModel, ErrorResponseModel
+from app.database.utils import delete_item
 
 brand_router = APIRouter()
 
@@ -74,14 +76,14 @@ async def update_brand_data(id: str, req: UpdateBrandModel = Body(...)):
 
 
 @brand_router.delete("/{id}", response_description="Brand data deleted from the database")
-async def delete_brand_data(_id: str):
-    deleted_brand = await delete_brand(_id)
+async def delete_brand_data(id: str):
+    deleted_brand = await delete_brand(id)
     if deleted_brand.status:
         return ResponseModel(
             code=status.HTTP_200_OK,
-            message="Brand with ID: {} removed".format(_id),
+            message="Brand with ID: {} removed".format(id),
         )
     return ErrorResponseModel(
         code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-        error_message="Brand with id {0} doesn't exist".format(_id)
+        error_message=deleted_brand.error_message
     )

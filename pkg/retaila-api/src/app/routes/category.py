@@ -2,9 +2,10 @@ from fastapi import APIRouter, Body, status
 from fastapi.encoders import jsonable_encoder
 
 from app.database.logic.category import retrieve_categories, add_category, retrieve_category, update_category, \
-    delete_category
+    category_collection, delete_category
 from app.database.models.category import CategorySchema, UpdateCategoryModel
 from app.database.models.model_base import ResponseModel, ErrorResponseModel
+from app.database.utils import delete_item
 
 category_router = APIRouter()
 
@@ -58,16 +59,16 @@ async def get_category_data(id: str):
 
 
 @category_router.put("/{id}")
-async def update_category_data(_id: str, req: UpdateCategoryModel = Body(...)):
+async def update_category_data(id: str, req: UpdateCategoryModel = Body(...)):
     # Update Req dictionary by filtering the "None" values
     req = {k: v for k, v in req.dict().items() if v is not None}
 
-    updated_category = await update_category(_id, req)
+    updated_category = await update_category(id, req)
 
     if updated_category.status:
         return ResponseModel(
             code=status.HTTP_200_OK,
-            message="Category with ID: {} name update is successful".format(_id),
+            message="Category with ID: {} name update is successful".format(id),
         )
     return ErrorResponseModel(
         code=status.HTTP_422_UNPROCESSABLE_ENTITY,
@@ -76,14 +77,14 @@ async def update_category_data(_id: str, req: UpdateCategoryModel = Body(...)):
 
 
 @category_router.delete("/{id}", response_description="Category data deleted from the database")
-async def delete_category_data(_id: str):
-    deleted_category = await delete_category(_id)
+async def delete_category_data(id: str):
+    deleted_category = await delete_category(id)
     if deleted_category:
         return ResponseModel(
             code=status.HTTP_200_OK,
-            message="Category with ID: {} removed".format(_id),
+            message="Category with ID: {} removed".format(id),
         )
     return ErrorResponseModel(
         code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-        error_message="Category with id {0} doesn't exist".format(_id)
+        error_message="Category with id {0} doesn't exist".format(id)
     )

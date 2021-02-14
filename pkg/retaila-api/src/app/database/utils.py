@@ -1,3 +1,6 @@
+from app.database.database import ResultGeneric
+
+
 def check_empty_body_request(data, result):
     # Check if an empty request body is sent.
     if len(data) < 1:
@@ -10,8 +13,7 @@ def check_empty_body_request(data, result):
 
 
 async def check_pk_in_collection(object_type, object_id, result):
-    """
-    A function that check if exist a primary key in a foreign collection.
+    """A function that check if exist a primary key in a foreign collection.
 
     Parameters
     -------
@@ -19,6 +21,9 @@ async def check_pk_in_collection(object_type, object_id, result):
         Class, object, table or collection from where is checked
     object_id:
         Id name of the element to be checked
+
+    Returns:
+    -------
     result: ResultGeneric()
         A result generic object
     """
@@ -37,3 +42,33 @@ async def check_pk_in_collection(object_type, object_id, result):
         return result
     else:
         return result
+
+
+async def delete_item(_id: str, collection):
+    """
+    A generic function that deletes an item from the database.
+
+    Parameters
+    -------
+    _id: str
+        Identification name, unique, that will find in order to delete the item.
+    collection:
+        Collection  from the database where to find the item to delete.
+
+    Returns:
+    ------
+    result: ResultGeneric()
+        A result generic object
+    """
+    # Delete a recipe from the database
+    result = ResultGeneric()
+    result.status = True
+
+    # Delete recipe
+    if await collection.find_one({"_id": _id}):
+        await collection.delete_one({"_id": _id})
+        result.status = True
+    else:
+        result.status = False
+        result.error_message.append("Couldn't find the ID '" + str(_id) + "' in the " + collection.name + " to delete.")
+    return result

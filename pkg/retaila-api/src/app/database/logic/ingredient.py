@@ -1,6 +1,6 @@
 from pymongo.errors import DuplicateKeyError
 from app.database.database import database, ResultGeneric
-from app.database.utils import check_empty_body_request, check_pk_in_collection
+from app.database.utils import check_empty_body_request, check_pk_in_collection, delete_item
 
 ingredient_collection = database.get_collection("ingredients_collection")
 
@@ -78,19 +78,9 @@ async def update_ingredient(_id: str, ingredient_data: dict):
     return result
 
 
+# Delete a ingredient from the database
 async def delete_ingredient(_id: str):
-    # Delete a ingredient from the database
-    result = ResultGeneric()
-    result.status = True
-
-    # Delete ingredient
-    if await ingredient_collection.find_one({"_id": _id}):
-        await ingredient_collection.delete_one({"_id": _id})
-        result.status = True
-        return result
-    else:
-        result.status = False
-        result.error_message.append("Couldn't find the ingredient ID to delete")
+    return await delete_item(_id=_id, collection=ingredient_collection)
 
 
 

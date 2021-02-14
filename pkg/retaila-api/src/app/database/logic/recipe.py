@@ -2,7 +2,7 @@ from bson import ObjectId
 from pymongo.errors import DuplicateKeyError
 
 from app.database.database import database, ResultGeneric
-from app.database.utils import check_empty_body_request, check_pk_in_collection
+from app.database.utils import check_empty_body_request, check_pk_in_collection, delete_item
 
 recipe_collection = database.get_collection("recipes_collection")
 
@@ -120,19 +120,12 @@ async def update_recipe(_id: str, recipe_data: dict):
     return result
 
 
+# Delete a recipe from the database
 async def delete_recipe(_id: str):
-    # Delete a recipe from the database
-    result = ResultGeneric()
-    result.status = True
+    return await delete_item(_id=_id, collection=recipe_collection)
 
-    # Delete recipe
-    if await recipe_collection.find_one({"_id": _id}):
-        await recipe_collection.delete_one({"_id": _id})
-        result.status = True
-        return result
-    else:
-        result.status = False
-        result.error_message.append("Couldn't find the recipe ID to delete")
+
+
 
 
 

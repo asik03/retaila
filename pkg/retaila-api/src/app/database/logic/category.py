@@ -1,6 +1,6 @@
 from pymongo.errors import DuplicateKeyError
 from app.database.database import database, ResultGeneric
-from app.database.utils import check_empty_body_request, check_pk_in_collection
+from app.database.utils import check_empty_body_request, check_pk_in_collection, delete_item
 
 category_collection = database.get_collection("categories_collection")
 
@@ -78,20 +78,9 @@ async def update_category(_id: str, category_data: dict):
     return result
 
 
+# Delete a category from the database
 async def delete_category(_id: str):
-    # Delete a category from the database
-    result = ResultGeneric()
-    result.status = True
-
-    # Delete category
-    if await category_collection.find_one({"_id": _id}):
-        await category_collection.delete_one({"_id": _id})
-        result.status = True
-        return result
-    else:
-        result.status = False
-        result.error_message.append("Couldn't find the category ID to delete")
-
+    return await delete_item(_id=_id, collection=category_collection)
 
 
 
