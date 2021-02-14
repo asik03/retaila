@@ -5,7 +5,7 @@ from app.database.logic.brand import add_brand, retrieve_brands, retrieve_brand,
     brand_collection, delete_brand
 from app.database.models.brand import BrandSchema, UpdateBrandModel
 from app.database.models.model_base import ResponseModel, ErrorResponseModel
-from app.database.utils import delete_item
+from app.database.utils import delete_item_from_collection
 
 brand_router = APIRouter()
 

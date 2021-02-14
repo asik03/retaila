@@ -5,7 +5,7 @@ from app.database.logic.category import retrieve_categories, add_category, retri
     category_collection, delete_category
 from app.database.models.category import CategorySchema, UpdateCategoryModel
 from app.database.models.model_base import ResponseModel, ErrorResponseModel
-from app.database.utils import delete_item
+from app.database.utils import delete_item_from_collection
 
 category_router = APIRouter()
 

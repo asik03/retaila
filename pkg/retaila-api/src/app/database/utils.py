@@ -44,7 +44,7 @@ async def check_pk_in_collection(object_type, object_id, result):
         return result
 
 
-async def delete_item(_id: str, collection):
+async def delete_item_from_collection(_id: str, collection):
     """
     A generic function that deletes an item from the database.
 
@@ -60,15 +60,39 @@ async def delete_item(_id: str, collection):
     result: ResultGeneric()
         A result generic object
     """
-    # Delete a recipe from the database
     result = ResultGeneric()
     result.status = True
 
-    # Delete recipe
     if await collection.find_one({"_id": _id}):
         await collection.delete_one({"_id": _id})
         result.status = True
     else:
         result.status = False
         result.error_message.append("Couldn't find the ID '" + str(_id) + "' in the " + collection.name + " to delete.")
+    return result
+
+
+async def get_item_from_collection(_id: str, collection):
+    """
+    A generic function that gets an item from the database.
+
+    Parameters
+    -------
+    _id: str
+        Identification name, unique, that will find in order to get the item.
+    collection:
+        Collection  from the database where to find the item to get.
+
+    Returns:
+    ------
+    result: ResultGeneric()
+        A result generic object
+    """
+    result = ResultGeneric()
+    result.status = True
+    result.data = await collection.find_one({"_id": _id})
+
+    if not result.data:
+        result.status = False
+        result.error_message.append("Couldn't find the ID '" + str(_id) + "' in the " + collection.name + ".")
     return result

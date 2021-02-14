@@ -1,7 +1,8 @@
 from pymongo.errors import DuplicateKeyError
 
 from app.database.database import database, ResultGeneric
-from app.database.utils import check_empty_body_request, check_pk_in_collection, delete_item
+from app.database.utils import check_empty_body_request, check_pk_in_collection, delete_item_from_collection, \
+    get_item_from_collection
 
 brand_collection = database.get_collection("brands_collection")
 
@@ -24,9 +25,10 @@ async def retrieve_brands():
 
 # Retrieve a brand with a matching ID
 async def retrieve_brand(_id: str) -> dict:
-    brand = await brand_collection.find_one({"_id": _id})
-    if brand:
-        return brand_helper(brand)
+    #brand = await brand_collection.find_one({"_id": _id})
+    brand = await get_item_from_collection(_id=_id, collection=brand_collection)
+    if brand.status:
+        return brand_helper(brand.data)
 
 
 # Add a new brand into to the database
@@ -84,5 +86,5 @@ async def update_brand(_id: str, brand_data: dict):
 
 # Delete a brand from the database
 async def delete_brand(_id: str):
-    return await delete_item(_id=_id, collection=brand_collection)
+    return await delete_item_from_collection(_id=_id, collection=brand_collection)
 
