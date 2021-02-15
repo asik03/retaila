@@ -52,7 +52,7 @@ async def get_ingredient_data(id: str):
         return ResponseModel(
             code=status.HTTP_200_OK,
             data=ingredient,
-            message="Ingredient data retrieved successfully"
+            message="Ingredients data retrieved successfully"
         )
     return ErrorResponseModel(
         code=status.HTTP_404_NOT_FOUND,
@@ -81,12 +81,12 @@ async def update_ingredient_data(id: str, req: UpdateIngredientModel = Body(...)
 @ingredient_router.delete("/{id}", response_description="Ingredient data deleted from the database")
 async def delete_ingredient_data(id: str):
     deleted_ingredient = await delete_ingredient(id)
-    if deleted_ingredient:
+    if deleted_ingredient.status:
         return ResponseModel(
             code=status.HTTP_200_OK,
             message="Ingredient with ID: {} removed".format(id),
         )
     return ErrorResponseModel(
         code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-        error_message="Ingredient with id {0} doesn't exist".format(id)
+        error_message=deleted_ingredient.error_message
     )

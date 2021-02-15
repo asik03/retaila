@@ -29,7 +29,7 @@ async def retrieve_category(_id: str) -> dict:
 
 # Add a new category into to the database
 async def add_category(category_data: dict) -> ResultGeneric:
-    result = ResultGeneric()
+    result = ResultGeneric().reset()
     result.status = True
 
     try:
@@ -38,7 +38,7 @@ async def add_category(category_data: dict) -> ResultGeneric:
         result.data = category_helper(new_category)
         result.status = True
     except DuplicateKeyError:
-        result.error_message = "Category '{}' already exists in the database!".format(category_data.get("_id"))
+        result.error_message.append("Category '{}' already exists in the database!".format(category_data.get("_id")))
         result.status = False
     except BaseException:
         result.error_message.append("Unrecognized error")
@@ -49,7 +49,7 @@ async def add_category(category_data: dict) -> ResultGeneric:
 
 # Update a category with a matching ID
 async def update_category(_id: str, category_data: dict):
-    result = ResultGeneric()
+    result = ResultGeneric().reset()
     result.status = True
 
     # Check if an empty request body is sent.

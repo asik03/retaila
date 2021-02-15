@@ -78,13 +78,12 @@ async def update_product_data(id: str, req: UpdateProductModel = Body(...)):
 @product_router.delete("/{id}", response_description="Product data deleted from the database")
 async def delete_product_data(id: str):
     deleted_product = await delete_product(id)
-    if deleted_product:
+    if deleted_product.status:
         return ResponseModel(
             code=status.HTTP_200_OK,
             message="Product with ID: {} removed".format(id),
-            data=""
         )
     return ErrorResponseModel(
         code=status.HTTP_404_NOT_FOUND,
-        error_message="Product with id {0} doesn't exist".format(id)
+        error_message=deleted_product.error_message
     )

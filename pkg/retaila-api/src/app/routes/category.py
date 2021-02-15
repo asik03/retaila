@@ -2,10 +2,9 @@ from fastapi import APIRouter, Body, status
 from fastapi.encoders import jsonable_encoder
 
 from app.database.logic.category import retrieve_categories, add_category, retrieve_category, update_category, \
-    category_collection, delete_category
+    delete_category
 from app.database.models.category import CategorySchema, UpdateCategoryModel
 from app.database.models.model_base import ResponseModel, ErrorResponseModel
-from app.database.utils import delete_item_from_collection
 
 category_router = APIRouter()
 
@@ -50,7 +49,7 @@ async def get_category_data(id: str):
         return ResponseModel(
             code=status.HTTP_200_OK,
             data=category,
-            message="Category data retrieved successfully"
+            message="Categories data retrieved successfully"
         )
     return ErrorResponseModel(
         code=status.HTTP_404_NOT_FOUND,
@@ -79,12 +78,12 @@ async def update_category_data(id: str, req: UpdateCategoryModel = Body(...)):
 @category_router.delete("/{id}", response_description="Category data deleted from the database")
 async def delete_category_data(id: str):
     deleted_category = await delete_category(id)
-    if deleted_category:
+    if deleted_category.status:
         return ResponseModel(
             code=status.HTTP_200_OK,
             message="Category with ID: {} removed".format(id),
         )
     return ErrorResponseModel(
         code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-        error_message="Category with id {0} doesn't exist".format(id)
+        error_message=deleted_category.error_message
     )

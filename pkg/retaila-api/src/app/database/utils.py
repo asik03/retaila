@@ -24,7 +24,7 @@ async def check_pk_in_collection(object_type, object_id, result):
 
     Returns:
     -------
-    result: ResultGeneric()
+    result: ResultGeneric().reset()
         A result generic object
     """
 
@@ -60,7 +60,7 @@ async def delete_item_from_collection(_id: str, collection):
     result: ResultGeneric()
         A result generic object
     """
-    result = ResultGeneric()
+    result = ResultGeneric().reset()
     result.status = True
 
     if await collection.find_one({"_id": _id}):
@@ -88,7 +88,7 @@ async def get_item_from_collection(_id: str, collection):
     result: ResultGeneric()
         A result generic object
     """
-    result = ResultGeneric()
+    result = ResultGeneric().reset()
     result.status = True
     result.data = await collection.find_one({"_id": _id})
 

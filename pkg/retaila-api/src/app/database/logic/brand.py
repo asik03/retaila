@@ -32,7 +32,7 @@ async def retrieve_brand(_id: str) -> dict:
 
 # Add a new brand into to the database
 async def add_brand(brand_data: dict) -> ResultGeneric:
-    result = ResultGeneric()
+    result = ResultGeneric().reset()
     result.status = True
 
     try:
@@ -52,7 +52,7 @@ async def add_brand(brand_data: dict) -> ResultGeneric:
 
 # Update a brand with a matching ID
 async def update_brand(_id: str, brand_data: dict):
-    result = ResultGeneric()
+    result = ResultGeneric().reset()
     result.status = True
 
     # Check if an empty request body is sent.

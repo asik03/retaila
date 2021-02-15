@@ -78,13 +78,12 @@ async def update_recipe_data(id: str, req: UpdateRecipeModel = Body(...)):
 @recipe_router.delete("/{id}", response_description="Recipe data deleted from the database")
 async def delete_recipe_data(id: str):
     deleted_recipe = await delete_recipe(id)
-    if deleted_recipe:
+    if deleted_recipe.status:
         return ResponseModel(
             code=status.HTTP_200_OK,
             message="Recipe with ID: {} removed".format(id),
-            data=""
         )
     return ErrorResponseModel(
         code=status.HTTP_404_NOT_FOUND,
-        error_message="Recipe with id {0} doesn't exist".format(id)
+        error_message=deleted_recipe.error_message
     )

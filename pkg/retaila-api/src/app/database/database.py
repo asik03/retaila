@@ -21,3 +21,11 @@ class ResultGeneric:
         self.code = None
         self.data = None
         self.error_message = []
+
+    def reset(self):
+        self.status = False
+        self.code = None
+        self.data = None
+        self.error_message = []
+        return self
+

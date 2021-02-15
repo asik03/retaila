@@ -29,7 +29,7 @@ async def retrieve_ingredient(_id: str) -> dict:
 
 # Add a new ingredient into to the database
 async def add_ingredient(ingredient_data: dict) -> ResultGeneric:
-    result = ResultGeneric()
+    result = ResultGeneric().reset()
     result.status = True
 
     try:
@@ -49,7 +49,7 @@ async def add_ingredient(ingredient_data: dict) -> ResultGeneric:
 
 # Update a ingredient with a matching ID
 async def update_ingredient(_id: str, ingredient_data: dict):
-    result = ResultGeneric()
+    result = ResultGeneric().reset()
     result.status = True
 
     # Check if an empty request body is sent.

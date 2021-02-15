@@ -36,7 +36,7 @@ async def retrieve_recipe(_id: str) -> dict:
 
 # Add a new recipe into to the database
 async def add_recipe(recipe_data: dict) -> ResultGeneric:
-    result = ResultGeneric()
+    result = ResultGeneric().reset()
     result.status = True
 
     # Check if the ingredients of the recipe exists in the database
@@ -66,7 +66,7 @@ async def add_recipe(recipe_data: dict) -> ResultGeneric:
 
 # Update a recipe with a matching ID
 async def update_recipe(_id: str, recipe_data: dict):
-    result = ResultGeneric()
+    result = ResultGeneric().reset()
     result.status = True
     result.error_message = []
 

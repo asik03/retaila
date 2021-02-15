@@ -39,7 +39,7 @@ async def retrieve_product(_id: str) -> dict:
 
 # Add a new product into to the database
 async def add_product(product_data: dict) -> ResultGeneric:
-    result = ResultGeneric()
+    result = ResultGeneric().reset()
     result.status = True
 
     # Check if the ingredient_key exists in the database
@@ -74,7 +74,7 @@ async def add_product(product_data: dict) -> ResultGeneric:
 
 # Update a product with a matching ID
 async def update_product(_id: str, product_data: dict):
-    result = ResultGeneric()
+    result = ResultGeneric().reset()
     result.status = True
 
     # Check if an empty request body is sent.

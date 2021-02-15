@@ -2,10 +2,9 @@ from fastapi import APIRouter, Body, status
 from fastapi.encoders import jsonable_encoder
 
 from app.database.logic.brand import add_brand, retrieve_brands, retrieve_brand, update_brand, \
-    brand_collection, delete_brand
+    delete_brand
 from app.database.models.brand import BrandSchema, UpdateBrandModel
 from app.database.models.model_base import ResponseModel, ErrorResponseModel
-from app.database.utils import delete_item_from_collection
 
 brand_router = APIRouter()
 
@@ -39,7 +38,7 @@ async def add_brand_data(brand: BrandSchema = Body(...)):
     else:
         return ErrorResponseModel(
             code=status.HTTP_400_BAD_REQUEST,
-            error_message= new_brand.error_message,
+            error_message=new_brand.error_message,
         )
 
 
