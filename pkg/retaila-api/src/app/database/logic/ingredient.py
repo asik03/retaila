@@ -1,6 +1,7 @@
 from pymongo.errors import DuplicateKeyError
 from app.database.database import database, ResultGeneric
-from app.database.utils import check_empty_body_request, check_pk_in_collection, delete_item_from_collection
+from app.database.utils import check_empty_body_request, check_pk_in_collection, delete_item_from_collection, \
+    get_item_from_collection
 
 ingredient_collection = database.get_collection("ingredients_collection")
 
@@ -21,9 +22,9 @@ async def retrieve_ingredients():
 
 # Retrieve a ingredient with a matching ID
 async def retrieve_ingredient(_id: str) -> dict:
-    ingredient = await ingredient_collection.find_one({"_id": _id})
-    if ingredient:
-        return ingredient_helper(ingredient)
+    ingredient = await get_item_from_collection(_id=_id, collection=ingredient_collection)
+    if ingredient.status:
+        return ingredient_helper(ingredient.data)
 
 
 # Add a new ingredient into to the database
@@ -48,21 +49,18 @@ async def add_ingredient(ingredient_data: dict) -> ResultGeneric:
 
 # Update a ingredient with a matching ID
 async def update_ingredient(_id: str, ingredient_data: dict):
-    result = ResultGeneric
+    result = ResultGeneric()
     result.status = True
 
     # Check if an empty request body is sent.
-    result = check_empty_body_request(ingredient_data)
+    result = check_empty_body_request(ingredient_data, result)
     if not result.status:
         return result
 
     # Check if the ingredient exists
     result = check_pk_in_collection(object_type="ingredient", object_id=_id, result=result)
-    # ingredient = await ingredient_collection.find_one({"_id": _id})
-    # if not ingredient:
-    #     result.error_message.append("Ingredient id {} doesn't exist in the database.".format(_id))
-    #     result.status = False
-    #     return result
+    if not result.status:
+        return result
 
     # Update the ingredient
     updated_ingredient = await ingredient_collection.update_one(
@@ -74,14 +72,13 @@ async def update_ingredient(_id: str, ingredient_data: dict):
         result.data = ingredient_helper(ingredient_updated)
     else:
         result.status = False
-        result.error_message.append("There was a problem while updating the ingredient with id {} into the database".format(_id))
+        result.error_message.append(
+            "There was a problem while updating the ingredient with id {} into the database".format(_id)
+        )
     return result
 
 
 # Delete a ingredient from the database
 async def delete_ingredient(_id: str):
     return await delete_item_from_collection(_id=_id, collection=ingredient_collection)
-
-
-
 

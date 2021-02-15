@@ -1,6 +1,7 @@
 from pymongo.errors import DuplicateKeyError
 from app.database.database import database, ResultGeneric
-from app.database.utils import check_empty_body_request, check_pk_in_collection, delete_item_from_collection
+from app.database.utils import check_empty_body_request, check_pk_in_collection, delete_item_from_collection, \
+    get_item_from_collection
 
 category_collection = database.get_collection("categories_collection")
 
@@ -21,9 +22,9 @@ async def retrieve_categories():
 
 # Retrieve a category with a matching ID
 async def retrieve_category(_id: str) -> dict:
-    category = await category_collection.find_one({"_id": _id})
-    if category:
-        return category_helper(category)
+    category = await get_item_from_collection(_id=_id, collection=category_collection)
+    if category.status:
+        return category_helper(category.data)
 
 
 # Add a new category into to the database
@@ -58,10 +59,7 @@ async def update_category(_id: str, category_data: dict):
 
     # Check if the category exists
     result = check_pk_in_collection(object_type="category", object_id=_id, result=result)
-    category = await category_collection.find_one({"_id": _id})
-    if not category:
-        result.error_message.append("Category id {} doesn't exist in the database.".format(_id))
-        result.status = False
+    if not result.status:
         return result
 
     # Update the category

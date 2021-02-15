@@ -25,7 +25,6 @@ async def retrieve_brands():
 
 # Retrieve a brand with a matching ID
 async def retrieve_brand(_id: str) -> dict:
-    #brand = await brand_collection.find_one({"_id": _id})
     brand = await get_item_from_collection(_id=_id, collection=brand_collection)
     if brand.status:
         return brand_helper(brand.data)
@@ -63,11 +62,9 @@ async def update_brand(_id: str, brand_data: dict):
 
     # Check if the brand exists
     result = check_pk_in_collection(object_type="brand", object_id=_id, result=result)
-    # brand = await brand_collection.find_one({"_id": _id})
-    # if not brand:
-    #     result.error_message.append("Brand id {} doesn't exist in the database.".format(_id))
-    #     result.status = False
-    #     return result
+
+    if not result.status:
+        return result
 
     # Update the brand
     updated_brand = await brand_collection.update_one(

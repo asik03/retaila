@@ -2,7 +2,8 @@ from bson import ObjectId
 from pymongo.errors import DuplicateKeyError
 
 from app.database.database import ResultGeneric, database
-from app.database.utils import check_empty_body_request, check_pk_in_collection, delete_item_from_collection
+from app.database.utils import check_empty_body_request, check_pk_in_collection, delete_item_from_collection, \
+    get_item_from_collection
 
 product_collection = database.get_collection("products_collection")
 
@@ -31,9 +32,9 @@ async def retrieve_products():
 
 # Retrieve a product with a matching ID
 async def retrieve_product(_id: str) -> dict:
-    product = await product_collection.find_one({"_id": ObjectId(_id)})
-    if product:
-        return product_helper(product)
+    product = await get_item_from_collection(_id=_id, collection=product_collection)
+    if product.status:
+        return product_helper(product.data)
 
 
 # Add a new product into to the database
@@ -44,26 +45,14 @@ async def add_product(product_data: dict) -> ResultGeneric:
     # Check if the ingredient_key exists in the database
     ingredient_key = product_data.get("ingredient_key")
     result = await check_pk_in_collection(object_type="ingredient", object_id=ingredient_key, result=result)
-    # if not await ingredient_collection.find_one({"_id": ingredient_key}):
-    #     result.error_message.append("The ingredient {} doesn't exists in the database".format(ingredient_key))
-    #     result.status = False
-    #     return result
 
     # Check if the brand_key exists in the database
     brand_key = product_data.get("brand_key")
     result = await check_pk_in_collection(object_type="brand", object_id=brand_key, result=result)
-    # if not await brand_collection.find_one({"_id": brand_key}):
-    #     result.error_message.append("The Category {} doesn't exists in the database".format(brand_key))
-    #     result.status = False
-    #     return result
 
     # Check if the category_key exists in the database
     category_key = product_data.get("category_key")
     result = await check_pk_in_collection(object_type="category", object_id=category_key, result=result)
-    # if not await category_collection.find_one({"_id": category_key}):
-    #     result.error_message.append("The category_key {} doesn't exists in the database".format(category_key))
-    #     result.status = False
-    #     return result
 
     if not result.status:
         return result
@@ -94,46 +83,29 @@ async def update_product(_id: str, product_data: dict):
         return result
 
     # Check if the product exists
-    result = await check_pk_in_collection(object_type="product", object_id=ObjectId(_id), result=result)
-    # if not await product_collection.find_one({"_id": ObjectId(id)}):
-    #     result.error_message.append("Product id {} doesn't exist in the database.".format(id))
-    #     result.status = False
-    #     return result
+    result = await check_pk_in_collection(object_type="product", object_id=_id, result=result)
 
     # Check if the ingredient_key exists in the database
     ingredient_key = product_data.get("ingredient_key")
     result = await check_pk_in_collection(object_type="ingredient", object_id=ingredient_key, result=result)
 
-    # if not await ingredient_collection.find_one({"ingredient_key": ingredient_key}):
-    #     result.error_message.append("The ingredient {} doesn't exists in the database".format(ingredient_key))
-    #     result.status = False
-    #     return result
-
     brand_key = product_data.get("brand_key")
     result = await check_pk_in_collection(object_type="brand", object_id=brand_key, result=result)
-    # if not await brand_collection.find_one({"_id": brand_key}):
-    #     result.error_message.append("The brand_key {} doesn't exists in the database".format(ingredient_key))
-    #     result.status = False
-    #     return result
 
     # Check if the category_key exists in the database
     category_key = product_data.get("category_key")
     result = await check_pk_in_collection(object_type="category", object_id=category_key, result=result)
-    # if not await category_collection.find_one({"_id": category_key}):
-    #     result.error_message.append("The category_key {} doesn't exists in the database".format(category_key))
-    #     result.error_message.append("The category_key {} doesn't exists in the database".format(category_key))
-    #     result.status = False
-    #     return result
 
     if not result.status:
         return result
+
     # Update the product
     updated_product = await product_collection.update_one(
-        {"_id": ObjectId(_id)}, {"$set": product_data}
+        {"_id": _id}, {"$set": product_data}
     )
     if updated_product:
         result.status = True
-        product_updated = await product_collection.find_one({"_id": ObjectId(_id)})
+        product_updated = await product_collection.find_one({"_id": _id})
         result.data = product_helper(product_updated)
     else:
         result.status = False
