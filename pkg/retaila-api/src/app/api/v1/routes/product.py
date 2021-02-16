@@ -24,7 +24,7 @@ async def get_products():
     )
 
 
-@product_router.post("/", response_description="Product data added into the core")
+@product_router.post("/", response_description="Product data added into the database")
 async def add_product_data(product: ProductSchema = Body(...)):
     product = jsonable_encoder(product)
     new_product = await add_product(product)
@@ -75,7 +75,7 @@ async def update_product_data(id: str, req: UpdateProductModel = Body(...)):
         )
 
 
-@product_router.delete("/{id}", response_description="Product data deleted from the core")
+@product_router.delete("/{id}", response_description="Product data deleted from the database")
 async def delete_product_data(id: str):
     deleted_product = await delete_product(id)
     if deleted_product.status:

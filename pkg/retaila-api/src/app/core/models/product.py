@@ -8,7 +8,7 @@ from pydantic import BaseModel
 # ellipsis "..." means that the Field is required. It could be replaced with None or a default value.
 class ProductSchema(BaseModel):
     product_name: str
-    ingredient_key: str  # Ingredient name registered in the core
+    ingredient_key: str  # Ingredient name registered in the database
     brand_key: str
     category_key: str
     quantity: int  # In grams
@@ -34,7 +34,7 @@ class ProductSchema(BaseModel):
 
 class UpdateProductModel(BaseModel):
     product_name: Optional[str]
-    ingredient_key: Optional[str]  # Ingredient name registered in the core
+    ingredient_key: Optional[str]  # Ingredient name registered in the database
     brand_key: Optional[str]
     category_key: Optional[str]
     quantity: Optional[int]  # In grams

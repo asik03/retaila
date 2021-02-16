@@ -24,7 +24,7 @@ async def get_recipes():
     )
 
 
-@recipe_router.post("/", response_description="Recipe data added into the core")
+@recipe_router.post("/", response_description="Recipe data added into the database")
 async def add_recipe_data(recipe: RecipeSchema = Body(...)):
     recipe = jsonable_encoder(recipe)
     new_recipe = await add_recipe(recipe)
@@ -75,7 +75,7 @@ async def update_recipe_data(id: str, req: UpdateRecipeModel = Body(...)):
         )
 
 
-@recipe_router.delete("/{id}", response_description="Recipe data deleted from the core")
+@recipe_router.delete("/{id}", response_description="Recipe data deleted from the database")
 async def delete_recipe_data(id: str):
     deleted_recipe = await delete_recipe(id)
     if deleted_recipe.status:

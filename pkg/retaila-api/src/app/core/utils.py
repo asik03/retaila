@@ -37,7 +37,7 @@ async def check_pk_in_collection(object_type, object_id, result):
     _module = __import__(my_dict['import_from_list'], globals(), locals(), my_dict['collection'], 0)
     _collection = getattr(_module, my_dict['collection'])
     if not await _collection.find_one({"_id": object_id}):
-        result.error_message.append("The {} {} doesn't exist in the core".format(object_type, object_id))
+        result.error_message.append("The {} {} doesn't exist in the database".format(object_type, object_id))
         result.status = False
         return result
     else:
@@ -46,14 +46,14 @@ async def check_pk_in_collection(object_type, object_id, result):
 
 async def delete_item_from_collection(_id: str, collection):
     """
-    A generic function that deletes an item from the core.
+    A generic function that deletes an item from the database.
 
     Parameters
     -------
     _id: str
         Identification name, unique, that will find in order to delete the item.
     collection:
-        Collection  from the core where to find the item to delete.
+        Collection  from the database where to find the item to delete.
 
     Returns:
     ------
@@ -74,14 +74,14 @@ async def delete_item_from_collection(_id: str, collection):
 
 async def get_item_from_collection(_id: str, collection):
     """
-    A generic function that gets an item from the core.
+    A generic function that gets an item from the database.
 
     Parameters
     -------
     _id: str
         Identification name, unique, that will find in order to get the item.
     collection:
-        Collection  from the core where to find the item to get.
+        Collection  from the database where to find the item to get.
 
     Returns:
     ------

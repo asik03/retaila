@@ -75,7 +75,7 @@ async def update_category_data(id: str, req: UpdateCategoryModel = Body(...)):
     )
 
 
-@category_router.delete("/{id}", response_description="Category data deleted from the core")
+@category_router.delete("/{id}", response_description="Category data deleted from the database")
 async def delete_category_data(id: str):
     deleted_category = await delete_category(id)
     if deleted_category.status:

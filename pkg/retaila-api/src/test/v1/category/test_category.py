@@ -1,4 +1,4 @@
-from test.test_main import client
+from test.v1.test_main import client
 
 test_existing_category_id = "pasta"
 test_nonexistent_category_id = "Caca"

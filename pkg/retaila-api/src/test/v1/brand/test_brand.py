@@ -1,4 +1,4 @@
-from test.test_main import client
+from test.v1.test_main import client
 
 test_existing_brand_id = "Barila"
 test_nonexistent_brand_id = "NoBarila"

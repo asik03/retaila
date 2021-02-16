@@ -74,7 +74,7 @@ async def update_brand_data(id: str, req: UpdateBrandModel = Body(...)):
     )
 
 
-@brand_router.delete("/{id}", response_description="Brand data deleted from the core")
+@brand_router.delete("/{id}", response_description="Brand data deleted from the database")
 async def delete_brand_data(id: str):
     deleted_brand = await delete_brand(id)
     if deleted_brand.status:

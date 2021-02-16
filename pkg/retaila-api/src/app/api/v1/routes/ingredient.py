@@ -78,7 +78,7 @@ async def update_ingredient_data(id: str, req: UpdateIngredientModel = Body(...)
     )
 
 
-@ingredient_router.delete("/{id}", response_description="Ingredient data deleted from the core")
+@ingredient_router.delete("/{id}", response_description="Ingredient data deleted from the database")
 async def delete_ingredient_data(id: str):
     deleted_ingredient = await delete_ingredient(id)
     if deleted_ingredient.status:
