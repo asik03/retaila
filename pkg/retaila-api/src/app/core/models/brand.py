@@ -3,7 +3,7 @@
 
 from typing import Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, validator
 
 
 # ellipsis "..." means that the Field is required. It could be replaced with None or a default value.
@@ -23,6 +23,13 @@ class BrandSchema(BaseModel):
 class UpdateBrandModel(BaseModel):
     brand_id: str = Field(alias="_id", description="Brand id")
     super_private_brand: Optional[bool]
+
+    # @validator('name')
+    # def name_must_contain_space(cls, v):
+    #     if ' ' not in v:
+    #         raise ValueError('must contain a space')
+    #     return v.title()
+
 
     class Config:
         schema_extra = {
