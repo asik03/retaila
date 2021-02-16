@@ -1,13 +1,13 @@
 from fastapi import APIRouter, Body, status
 from fastapi.encoders import jsonable_encoder
 
-from app.database.logic.ingredient import (
+from app.core.logic.ingredient import (
     retrieve_ingredient,
     retrieve_ingredients,
     update_ingredient, add_ingredient, delete_ingredient,
 )
-from app.database.models.ingredient import IngredientSchema, UpdateIngredientModel
-from app.database.models.model_base import ResponseModel, ErrorResponseModel
+from app.core.models.ingredient import IngredientSchema, UpdateIngredientModel
+from app.core.models.model_base import ResponseModel, ErrorResponseModel
 
 ingredient_router = APIRouter()
 
@@ -78,7 +78,7 @@ async def update_ingredient_data(id: str, req: UpdateIngredientModel = Body(...)
     )
 
 
-@ingredient_router.delete("/{id}", response_description="Ingredient data deleted from the database")
+@ingredient_router.delete("/{id}", response_description="Ingredient data deleted from the core")
 async def delete_ingredient_data(id: str):
     deleted_ingredient = await delete_ingredient(id)
     if deleted_ingredient.status:

@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Body, status
 from fastapi.encoders import jsonable_encoder
 
-from app.database.logic.brand import add_brand, retrieve_brands, retrieve_brand, update_brand, \
+from app.core.logic.brand import add_brand, retrieve_brands, retrieve_brand, update_brand, \
     delete_brand
-from app.database.models.brand import BrandSchema, UpdateBrandModel
-from app.database.models.model_base import ResponseModel, ErrorResponseModel
+from app.core.models.brand import BrandSchema, UpdateBrandModel
+from app.core.models.model_base import ResponseModel, ErrorResponseModel
 
 brand_router = APIRouter()
 
@@ -74,7 +74,7 @@ async def update_brand_data(id: str, req: UpdateBrandModel = Body(...)):
     )
 
 
-@brand_router.delete("/{id}", response_description="Brand data deleted from the database")
+@brand_router.delete("/{id}", response_description="Brand data deleted from the core")
 async def delete_brand_data(id: str):
     deleted_brand = await delete_brand(id)
     if deleted_brand.status:

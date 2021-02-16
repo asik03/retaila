@@ -1,8 +1,8 @@
 from bson import ObjectId
 from pymongo.errors import DuplicateKeyError
 
-from app.database.database import database, ResultGeneric
-from app.database.utils import check_empty_body_request, check_pk_in_collection, delete_item_from_collection, \
+from app.core.database import database, ResultGeneric
+from app.core.utils import check_empty_body_request, check_pk_in_collection, delete_item_from_collection, \
     get_item_from_collection
 
 recipe_collection = database.get_collection("recipes_collection")
@@ -19,7 +19,7 @@ def recipe_helper(recipe) -> dict:
     }
 
 
-# Retrieve all recipes present in the database
+# Retrieve all recipes present in the core
 async def retrieve_recipes():
     recipes = []
     async for recipe in recipe_collection.find():
@@ -34,12 +34,12 @@ async def retrieve_recipe(_id: str) -> dict:
         return recipe_helper(recipe.data)
 
 
-# Add a new recipe into to the database
+# Add a new recipe into to the core
 async def add_recipe(recipe_data: dict) -> ResultGeneric:
     result = ResultGeneric().reset()
     result.status = True
 
-    # Check if the ingredients of the recipe exists in the database
+    # Check if the ingredients of the recipe exists in the core
     for ingredient in recipe_data.get("ingredients"):
         ingredient_key = ingredient.get("ingredient_key")
         result = check_pk_in_collection(object_type="ingredient", object_id=ingredient_key, result=result)
@@ -48,14 +48,14 @@ async def add_recipe(recipe_data: dict) -> ResultGeneric:
         # Return to avoid the updating
         return result
 
-    # Adding the recipe into the database
+    # Adding the recipe into the core
     try:
         recipe = await recipe_collection.insert_one(recipe_data)
         new_recipe = await recipe_collection.find_one({"_id": recipe.inserted_id})
         result.data = recipe_helper(new_recipe)
         result.status = True
     except DuplicateKeyError:
-        result.error_message.append("Recipe '{}' already exists in the database!".format(recipe_data.get("_id")))
+        result.error_message.append("Recipe '{}' already exists in the core!".format(recipe_data.get("_id")))
         result.status = False
     except BaseException:
         result.error_message.append("Unrecognized error")
@@ -87,7 +87,7 @@ async def update_recipe(_id: str, recipe_data: dict):
     if not result.status:
         return result
 
-    # Check if the ingredients of the recipe exists in the database
+    # Check if the ingredients of the recipe exists in the core
     for ingredient in recipe_data.get("ingredients"):
         ingredient_key = ingredient.get("ingredient_key")
         result = check_pk_in_collection(object_type="ingredient", object_id=ingredient_key, result=result)
@@ -106,11 +106,11 @@ async def update_recipe(_id: str, recipe_data: dict):
         result.data = recipe_helper(recipe_updated)
     else:
         result.status = False
-        result.error_message.append("There was a problem while updating the recipe with id {} into the database".format(_id))
+        result.error_message.append("There was a problem while updating the recipe with id {} into the core".format(_id))
     return result
 
 
-# Delete a recipe from the database
+# Delete a recipe from the core
 async def delete_recipe(_id: str):
     return await delete_item_from_collection(_id=_id, collection=recipe_collection)
 

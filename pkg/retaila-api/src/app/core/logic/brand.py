@@ -1,7 +1,7 @@
 from pymongo.errors import DuplicateKeyError
 
-from app.database.database import database, ResultGeneric
-from app.database.utils import check_empty_body_request, check_pk_in_collection, delete_item_from_collection, \
+from app.core.database import database, ResultGeneric
+from app.core.utils import check_empty_body_request, check_pk_in_collection, delete_item_from_collection, \
     get_item_from_collection
 
 brand_collection = database.get_collection("brands_collection")
@@ -15,7 +15,7 @@ def brand_helper(brand) -> dict:
     }
 
 
-# Retrieve all brands present in the database
+# Retrieve all brands present in the core
 async def retrieve_brands():
     brands = []
     async for brand in brand_collection.find():
@@ -30,7 +30,7 @@ async def retrieve_brand(_id: str) -> dict:
         return brand_helper(brand.data)
 
 
-# Add a new brand into to the database
+# Add a new brand into to the core
 async def add_brand(brand_data: dict) -> ResultGeneric:
     result = ResultGeneric().reset()
     result.status = True
@@ -41,7 +41,7 @@ async def add_brand(brand_data: dict) -> ResultGeneric:
         result.data = brand_helper(new_brand)
         result.status = True
     except DuplicateKeyError:
-        result.error_message.append("Brand '{}' already exists in the database!".format(brand_data.get("_id")))
+        result.error_message.append("Brand '{}' already exists in the core!".format(brand_data.get("_id")))
         result.status = False
     except BaseException:
         result.error_message.append("Unrecognized error")
@@ -77,11 +77,11 @@ async def update_brand(_id: str, brand_data: dict):
     else:
         result.status = False
         result.error_message.append(
-            "There was a problem while updating the brand with id {} into the database".format(_id))
+            "There was a problem while updating the brand with id {} into the core".format(_id))
     return result
 
 
-# Delete a brand from the database
+# Delete a brand from the core
 async def delete_brand(_id: str):
     return await delete_item_from_collection(_id=_id, collection=brand_collection)
 

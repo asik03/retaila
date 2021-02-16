@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Body, status
 from fastapi.encoders import jsonable_encoder
 
-from app.database.logic.category import retrieve_categories, add_category, retrieve_category, update_category, \
+from app.core.logic.category import retrieve_categories, add_category, retrieve_category, update_category, \
     delete_category
-from app.database.models.category import CategorySchema, UpdateCategoryModel
-from app.database.models.model_base import ResponseModel, ErrorResponseModel
+from app.core.models.category import CategorySchema, UpdateCategoryModel
+from app.core.models.model_base import ResponseModel, ErrorResponseModel
 
 category_router = APIRouter()
 
@@ -75,7 +75,7 @@ async def update_category_data(id: str, req: UpdateCategoryModel = Body(...)):
     )
 
 
-@category_router.delete("/{id}", response_description="Category data deleted from the database")
+@category_router.delete("/{id}", response_description="Category data deleted from the core")
 async def delete_category_data(id: str):
     deleted_category = await delete_category(id)
     if deleted_category.status:

@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Body, status
 from fastapi.encoders import jsonable_encoder
 
-from app.database.logic.recipe import retrieve_recipes, add_recipe, retrieve_recipe, update_recipe, delete_recipe
-from app.database.models.model_base import ResponseModel, ErrorResponseModel
-from app.database.models.recipe import RecipeSchema, UpdateRecipeModel
+from app.core.logic.recipe import retrieve_recipes, add_recipe, retrieve_recipe, update_recipe, delete_recipe
+from app.core.models.model_base import ResponseModel, ErrorResponseModel
+from app.core.models.recipe import RecipeSchema, UpdateRecipeModel
 
 recipe_router = APIRouter()
 
@@ -24,7 +24,7 @@ async def get_recipes():
     )
 
 
-@recipe_router.post("/", response_description="Recipe data added into the database")
+@recipe_router.post("/", response_description="Recipe data added into the core")
 async def add_recipe_data(recipe: RecipeSchema = Body(...)):
     recipe = jsonable_encoder(recipe)
     new_recipe = await add_recipe(recipe)
@@ -75,7 +75,7 @@ async def update_recipe_data(id: str, req: UpdateRecipeModel = Body(...)):
         )
 
 
-@recipe_router.delete("/{id}", response_description="Recipe data deleted from the database")
+@recipe_router.delete("/{id}", response_description="Recipe data deleted from the core")
 async def delete_recipe_data(id: str):
     deleted_recipe = await delete_recipe(id)
     if deleted_recipe.status:

@@ -1,6 +1,6 @@
 from pymongo.errors import DuplicateKeyError
-from app.database.database import database, ResultGeneric
-from app.database.utils import check_empty_body_request, check_pk_in_collection, delete_item_from_collection, \
+from app.core.database import database, ResultGeneric
+from app.core.utils import check_empty_body_request, check_pk_in_collection, delete_item_from_collection, \
     get_item_from_collection
 
 ingredient_collection = database.get_collection("ingredients_collection")
@@ -12,7 +12,7 @@ def ingredient_helper(ingredient) -> dict:
     }
 
 
-# Retrieve all ingredients present in the database
+# Retrieve all ingredients present in the core
 async def retrieve_ingredients():
     ingredients = []
     async for ingredient in ingredient_collection.find():
@@ -27,7 +27,7 @@ async def retrieve_ingredient(_id: str) -> dict:
         return ingredient_helper(ingredient.data)
 
 
-# Add a new ingredient into to the database
+# Add a new ingredient into to the core
 async def add_ingredient(ingredient_data: dict) -> ResultGeneric:
     result = ResultGeneric().reset()
     result.status = True
@@ -38,7 +38,7 @@ async def add_ingredient(ingredient_data: dict) -> ResultGeneric:
         result.data = ingredient_helper(new_ingredient)
         result.status = True
     except DuplicateKeyError:
-        result.error_message.append("ingredient '{}' already exists in the database!".format(ingredient_data.get("_id")))
+        result.error_message.append("ingredient '{}' already exists in the core!".format(ingredient_data.get("_id")))
         result.status = False
     except BaseException:
         result.error_message.append("Unrecognized error")
@@ -73,12 +73,12 @@ async def update_ingredient(_id: str, ingredient_data: dict):
     else:
         result.status = False
         result.error_message.append(
-            "There was a problem while updating the ingredient with id {} into the database".format(_id)
+            "There was a problem while updating the ingredient with id {} into the core".format(_id)
         )
     return result
 
 
-# Delete a ingredient from the database
+# Delete a ingredient from the core
 async def delete_ingredient(_id: str):
     return await delete_item_from_collection(_id=_id, collection=ingredient_collection)
 

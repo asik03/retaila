@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Body, status
 from fastapi.encoders import jsonable_encoder
 
-from app.database.logic.product import retrieve_products, add_product, retrieve_product, update_product, delete_product
-from app.database.models.model_base import ResponseModel, ErrorResponseModel
-from app.database.models.product import ProductSchema, UpdateProductModel
+from app.core.logic.product import retrieve_products, add_product, retrieve_product, update_product, delete_product
+from app.core.models.model_base import ResponseModel, ErrorResponseModel
+from app.core.models.product import ProductSchema, UpdateProductModel
 
 product_router = APIRouter()
 
@@ -24,7 +24,7 @@ async def get_products():
     )
 
 
-@product_router.post("/", response_description="Product data added into the database")
+@product_router.post("/", response_description="Product data added into the core")
 async def add_product_data(product: ProductSchema = Body(...)):
     product = jsonable_encoder(product)
     new_product = await add_product(product)
@@ -75,7 +75,7 @@ async def update_product_data(id: str, req: UpdateProductModel = Body(...)):
         )
 
 
-@product_router.delete("/{id}", response_description="Product data deleted from the database")
+@product_router.delete("/{id}", response_description="Product data deleted from the core")
 async def delete_product_data(id: str):
     deleted_product = await delete_product(id)
     if deleted_product.status:
