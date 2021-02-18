@@ -61,7 +61,7 @@ async def update_brand(_id: str, brand_data: dict):
         return result
 
     # Check if the brand exists
-    result = check_pk_in_collection(object_type="brand", object_id=_id, result=result)
+    result = check_pk_in_collection(object_type="brand", object_id=_id, result=result, is_object_id=False)
 
     if not result.status:
         return result

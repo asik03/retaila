@@ -42,7 +42,7 @@ async def add_recipe(recipe_data: dict) -> ResultGeneric:
     # Check if the ingredients of the recipe exists in the database
     for ingredient in recipe_data.get("ingredients"):
         ingredient_key = ingredient.get("ingredient_key")
-        result = check_pk_in_collection(object_type="ingredient", object_id=ingredient_key, result=result)
+        result = await check_pk_in_collection(object_type="ingredient", object_id=ingredient_key, result=result)
 
     if not result.status:
         # Return to avoid the updating
@@ -90,7 +90,7 @@ async def update_recipe(_id: str, recipe_data: dict):
     # Check if the ingredients of the recipe exists in the database
     for ingredient in recipe_data.get("ingredients"):
         ingredient_key = ingredient.get("ingredient_key")
-        result = check_pk_in_collection(object_type="ingredient", object_id=ingredient_key, result=result)
+        result = await check_pk_in_collection(object_type="ingredient", object_id=ingredient_key, result=result)
 
     if not result.status:
         # Return to avoid the updating

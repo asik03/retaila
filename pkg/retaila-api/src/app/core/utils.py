@@ -1,3 +1,5 @@
+from bson import ObjectId
+
 from app.core.database import ResultGeneric
 
 
@@ -12,7 +14,7 @@ def check_empty_body_request(data, result):
     return result
 
 
-async def check_pk_in_collection(object_type, object_id, result):
+async def check_pk_in_collection(object_type, object_id, result, is_object_id):
     """A function that check if exist a primary key in a foreign collection.
 
     Parameters
@@ -26,6 +28,10 @@ async def check_pk_in_collection(object_type, object_id, result):
     -------
     result: ResultGeneric().reset()
         A result generic object
+        :param object_type:
+        :param object_id:
+        :param result:
+        :param is_object_id:
     """
 
     my_dict = {
@@ -36,8 +42,12 @@ async def check_pk_in_collection(object_type, object_id, result):
 
     _module = __import__(my_dict['import_from_list'], globals(), locals(), my_dict['collection'], 0)
     _collection = getattr(_module, my_dict['collection'])
+
+    if is_object_id:
+        object_id = ObjectId(object_id)
+
     if not await _collection.find_one({"_id": object_id}):
-        result.error_message.append("The {} {} doesn't exist in the database".format(object_type, object_id))
+        result.error_message.append("The {} '{}' doesn't exist in the database".format(object_type, object_id))
         result.status = False
         return result
     else:
