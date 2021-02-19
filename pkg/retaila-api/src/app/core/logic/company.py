@@ -5,6 +5,8 @@ from app.core.utils import check_empty_body_request, check_pk_in_collection, del
 
 company_collection = database.get_collection("companies_collection")
 
+is_obj_id = False # The company name is the ID itself
+
 
 def company_helper(company) -> dict:
     return {
@@ -22,7 +24,7 @@ async def retrieve_companies():
 
 # Retrieve a company with a matching ID
 async def retrieve_company(_id: str) -> dict:
-    company = await get_item_from_collection(_id=_id, collection=company_collection)
+    company = await get_item_from_collection(_id=_id, collection=company_collection, is_object_id=is_obj_id)
     if company.status:
         return company_helper(company.data)
 
@@ -38,7 +40,7 @@ async def add_company(company_data: dict) -> ResultGeneric:
         result.data = company_helper(new_company)
         result.status = True
     except DuplicateKeyError:
-        result.error_message.append("company '{}' already exists in the database!".format(company_data.get("_id")))
+        result.error_message.append("Company '{}' already exists in the database!".format(company_data.get("_id")))
         result.status = False
     except BaseException:
         result.error_message.append("Unrecognized error")
@@ -58,7 +60,7 @@ async def update_company(_id: str, company_data: dict):
         return result
 
     # Check if the company exists
-    result = check_pk_in_collection(object_type="company", object_id=_id, result=result)
+    result = check_pk_in_collection(object_type="company", object_id=_id, result=result, is_object_id=is_obj_id)
     if not result.status:
         return result
 
@@ -80,5 +82,4 @@ async def update_company(_id: str, company_data: dict):
 
 # Delete a company from the database
 async def delete_company(_id: str):
-    return await delete_item_from_collection(_id=_id, collection=company_collection)
-
+    return await delete_item_from_collection(_id=_id, collection=company_collection, is_object_id=is_obj_id)

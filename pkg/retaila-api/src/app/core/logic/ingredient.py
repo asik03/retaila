@@ -38,7 +38,7 @@ async def add_ingredient(ingredient_data: dict) -> ResultGeneric:
         result.data = ingredient_helper(new_ingredient)
         result.status = True
     except DuplicateKeyError:
-        result.error_message.append("ingredient '{}' already exists in the database!".format(ingredient_data.get("_id")))
+        result.error_message.append("Ingredient '{}' already exists in the database!".format(ingredient_data.get("_id")))
         result.status = False
     except BaseException:
         result.error_message.append("Unrecognized error")

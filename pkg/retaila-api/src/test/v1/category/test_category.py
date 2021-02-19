@@ -5,12 +5,10 @@ test_nonexistent_category_id = "Caca"
 
 category_data_1 = {
     "_id": test_existing_category_id,
-    "super_private_category": False
 }
 
 category_data_2 = {
     "_id": test_nonexistent_category_id,
-    "super_private_category": False
 }
 
 

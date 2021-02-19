@@ -19,19 +19,18 @@ async def check_pk_in_collection(object_type, object_id, result, is_object_id):
 
     Parameters
     -------
-    object_type: str
+    :param object_type: str
         Class, object, table or collection from where is checked
-    object_id:
+    :param object_id:
         Id name of the element to be checked
+    :param result:
+    :param is_object_id:
 
     Returns:
     -------
-    result: ResultGeneric().reset()
+    :return ResultGeneric().reset()
         A result generic object
-        :param object_type:
-        :param object_id:
-        :param result:
-        :param is_object_id:
+
     """
 
     my_dict = {
@@ -54,24 +53,28 @@ async def check_pk_in_collection(object_type, object_id, result, is_object_id):
         return result
 
 
-async def delete_item_from_collection(_id: str, collection):
+async def delete_item_from_collection(_id: str, collection, is_object_id):
     """
     A generic function that deletes an item from the database.
 
     Parameters
     -------
-    _id: str
+    :param is_object_id: boolean to consider whether the PK is of the collection is of type ObjectId
+    :param _id: str
         Identification name, unique, that will find in order to delete the item.
-    collection:
+    :param collection:
         Collection  from the database where to find the item to delete.
 
     Returns:
     ------
-    result: ResultGeneric()
+    :return result: ResultGeneric()
         A result generic object
     """
     result = ResultGeneric().reset()
     result.status = True
+
+    if is_object_id:
+        _id = ObjectId(_id)
 
     if await collection.find_one({"_id": _id}):
         await collection.delete_one({"_id": _id})
@@ -82,15 +85,16 @@ async def delete_item_from_collection(_id: str, collection):
     return result
 
 
-async def get_item_from_collection(_id: str, collection):
+async def get_item_from_collection(_id: str, collection, is_object_id):
     """
     A generic function that gets an item from the database.
 
     Parameters
     -------
-    _id: str
+    :param is_object_id: boolean to consider whether the PK is of the collection is of type ObjectId
+    :param _id: str
         Identification name, unique, that will find in order to get the item.
-    collection:
+    :param collection:
         Collection  from the database where to find the item to get.
 
     Returns:
@@ -100,6 +104,10 @@ async def get_item_from_collection(_id: str, collection):
     """
     result = ResultGeneric().reset()
     result.status = True
+
+    if is_object_id:
+        _id = ObjectId(_id)
+
     result.data = await collection.find_one({"_id": _id})
 
     if not result.data:

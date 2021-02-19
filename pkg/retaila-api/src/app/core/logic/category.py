@@ -5,6 +5,8 @@ from app.core.utils import check_empty_body_request, check_pk_in_collection, del
 
 category_collection = database.get_collection("categories_collection")
 
+is_obj_id = False # The category name is the ID itself of the collection
+
 
 def category_helper(category) -> dict:
     return {
@@ -22,7 +24,7 @@ async def retrieve_categories():
 
 # Retrieve a category with a matching ID
 async def retrieve_category(_id: str) -> dict:
-    category = await get_item_from_collection(_id=_id, collection=category_collection)
+    category = await get_item_from_collection(_id=_id, collection=category_collection, is_object_id=is_obj_id)
     if category.status:
         return category_helper(category.data)
 
@@ -53,12 +55,12 @@ async def update_category(_id: str, category_data: dict):
     result.status = True
 
     # Check if an empty request body is sent.
-    result = check_empty_body_request(category_data)
+    result = check_empty_body_request(data=category_data, result=result)
     if not result.status:
         return result
 
     # Check if the category exists
-    result = check_pk_in_collection(object_type="category", object_id=_id, result=result)
+    result = check_pk_in_collection(object_type="category", object_id=_id, result=result, is_object_id=is_obj_id)
     if not result.status:
         return result
 
@@ -78,7 +80,4 @@ async def update_category(_id: str, category_data: dict):
 
 # Delete a category from the database
 async def delete_category(_id: str):
-    return await delete_item_from_collection(_id=_id, collection=category_collection)
-
-
-
+    return await delete_item_from_collection(_id=_id, collection=category_collection, is_object_id=is_obj_id)
