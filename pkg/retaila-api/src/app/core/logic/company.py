@@ -5,7 +5,7 @@ from app.core.utils import check_empty_body_request, check_pk_in_collection, del
 
 company_collection = database.get_collection("companies_collection")
 
-is_obj_id = False # The company name is the ID itself
+is_obj_id = False  # The company name is the ID itself
 
 
 def company_helper(company) -> dict:

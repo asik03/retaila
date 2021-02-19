@@ -49,7 +49,7 @@ async def get_supermarket_local_data(id: str):
         return ResponseModel(
             code=status.HTTP_200_OK,
             data=supermarket_local,
-            message="Supermarket_locals data retrieved successfully"
+            message="Supermarket_local data retrieved successfully"
         )
     return ErrorResponseModel(
         code=status.HTTP_404_NOT_FOUND,

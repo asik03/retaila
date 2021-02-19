@@ -17,10 +17,10 @@ def test_read_category():
     assert response.status_code == 200
     assert response.json() == {
         "code": 200,
-        "message": "Categories data retrieved successfully",
+        "message": "Category data retrieved successfully",
         "data": [
             {
-                "id": "pasta",
+                "id": test_existing_category_id,
             }
         ]
     }

@@ -52,7 +52,7 @@ async def get_ingredient_data(id: str):
         return ResponseModel(
             code=status.HTTP_200_OK,
             data=ingredient,
-            message="Ingredients data retrieved successfully"
+            message="Ingredient data retrieved successfully"
         )
     return ErrorResponseModel(
         code=status.HTTP_404_NOT_FOUND,

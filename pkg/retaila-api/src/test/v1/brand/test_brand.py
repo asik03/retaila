@@ -22,7 +22,7 @@ def test_read_brand():
         "message": "Brand data retrieved successfully",
         "data": [
             {
-                "id": "Barila",
+                "id": test_existing_brand_id,
                 "super_private_brand": False
             }
         ]

@@ -20,7 +20,7 @@ def test_read_company():
         "message": "Company data retrieved successfully",
         "data": [
             {
-                "id": "Mercadona",
+                "id": test_existing_company_id,
             }
         ]
     }

@@ -49,7 +49,7 @@ async def get_category_data(id: str):
         return ResponseModel(
             code=status.HTTP_200_OK,
             data=category,
-            message="Categories data retrieved successfully"
+            message="Category data retrieved successfully"
         )
     return ErrorResponseModel(
         code=status.HTTP_404_NOT_FOUND,
