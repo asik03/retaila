@@ -32,7 +32,7 @@ def test_read_nonexistent_category():
     assert response.json() == {
         "code": 404,
         "message": "An error occurred.",
-        "error_message": "Category doesn't exist."
+        "error_message": "Category '{}' doesn't exist.".format(test_nonexistent_category_id)
     }
 
 
@@ -91,6 +91,6 @@ def test_delete_nonexistent_category():
       "code": 422,
       "message": "An error occurred.",
       "error_message": [
-        "Couldn't find the ID '" + test_nonexistent_category_id + "' in the categories_collection to delete."
+        "Couldn't find the ID '" + test_nonexistent_category_id + "' in the category_collection to delete."
       ]
     }

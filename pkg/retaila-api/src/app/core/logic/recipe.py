@@ -3,9 +3,9 @@ from pymongo.errors import DuplicateKeyError
 
 from app.core.database import database, ResultGeneric
 from app.core.utils import check_empty_body_request, check_pk_in_collection, delete_item_from_collection, \
-    get_item_from_collection
+    get_item_from_collection, is_object_id_map_dict
 
-recipe_collection = database.get_collection("recipes_collection")
+recipe_collection = database.get_collection("recipe_collection")
 
 
 def recipe_helper(recipe) -> dict:
@@ -76,21 +76,33 @@ async def update_recipe(_id: str, recipe_data: dict):
         return result
 
     # Check if the recipe exists
-    result = check_pk_in_collection(object_type="recipe", object_id=_id, result=result)
+    result = check_pk_in_collection(
+        object_type="recipe",
+        object_id=_id,
+        result=result,
+    )
 
     if not result.status:
         return result
 
     # # Check if the author exists
     author_key = recipe_data.get("author_id")
-    result = check_pk_in_collection(object_type="author", object_id=author_key, result=result)
+    result = check_pk_in_collection(
+        object_type="author",
+        object_id=author_key,
+        result=result,
+    )
     if not result.status:
         return result
 
     # Check if the ingredients of the recipe exists in the database
     for ingredient in recipe_data.get("ingredients"):
         ingredient_key = ingredient.get("ingredient_key")
-        result = await check_pk_in_collection(object_type="ingredient", object_id=ingredient_key, result=result)
+        result = await check_pk_in_collection(
+            object_type="ingredient",
+            object_id=ingredient_key,
+            result=result,
+        )
 
     if not result.status:
         # Return to avoid the updating
@@ -112,7 +124,10 @@ async def update_recipe(_id: str, recipe_data: dict):
 
 # Delete a recipe from the database
 async def delete_recipe(_id: str):
-    return await delete_item_from_collection(_id=_id, collection=recipe_collection)
+    return await delete_item_from_collection(
+        _id=_id,
+        collection=recipe_collection,
+    )
 
 
 

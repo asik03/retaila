@@ -32,7 +32,7 @@ def test_read_nonexistent_company():
     assert response.json() == {
         "code": 404,
         "message": "An error occurred.",
-        "error_message": "Company doesn't exist."
+        "error_message": "Company '{}' doesn't exist.".format(test_nonexistent_company_id)
     }
 
 
@@ -91,6 +91,6 @@ def test_delete_nonexistent_company():
       "code": 422,
       "message": "An error occurred.",
       "error_message": [
-        "Couldn't find the ID '" + test_nonexistent_company_id + "' in the companies_collection to delete."
+        "Couldn't find the ID '" + test_nonexistent_company_id + "' in the company_collection to delete."
       ]
     }

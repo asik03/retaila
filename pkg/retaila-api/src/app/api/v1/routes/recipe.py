@@ -52,7 +52,8 @@ async def get_recipe_data(id: str):
         )
     return ErrorResponseModel(
         code=status.HTTP_404_NOT_FOUND,
-        error_message="Recipe doesn't exist."
+        error_message="Recipe '{}' doesn't exist.".format(id)
+
     )
 
 

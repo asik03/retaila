@@ -32,7 +32,7 @@ def test_read_nonexistent_ingredient():
     assert response.json() == {
         "code": 404,
         "message": "An error occurred.",
-        "error_message": "Ingredient doesn't exist."
+        "error_message": "Ingredient '{}' doesn't exist.".format(test_nonexistent_ingredient_id)
     }
 
 
@@ -91,6 +91,6 @@ def test_delete_nonexistent_ingredient():
       "code": 422,
       "message": "An error occurred.",
       "error_message": [
-        "Couldn't find the ID '" + test_nonexistent_ingredient_id + "' in the ingredients_collection to delete."
+        "Couldn't find the ID '" + test_nonexistent_ingredient_id + "' in the ingredient_collection to delete."
       ]
     }

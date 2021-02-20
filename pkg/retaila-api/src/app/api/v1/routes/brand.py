@@ -52,7 +52,7 @@ async def get_brand_data(id: str):
             message="Brand data retrieved successfully")
     return ErrorResponseModel(
             code=status.HTTP_404_NOT_FOUND,
-            error_message="Brand doesn't exist."
+            error_message="Brand '{}' doesn't exist.".format(id)
     )
 
 

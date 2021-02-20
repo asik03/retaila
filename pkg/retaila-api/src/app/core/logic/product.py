@@ -1,11 +1,9 @@
-from bson import ObjectId
 from pymongo.errors import DuplicateKeyError
 
-from app.core.database import ResultGeneric, database
-from app.core.utils import check_empty_body_request, check_pk_in_collection, delete_item_from_collection, \
-    get_item_from_collection
+from app.core.database import database
+from app.core.utils import *
 
-product_collection = database.get_collection("products_collection")
+product_collection = database.get_collection("product_collection")
 
 
 def product_helper(product) -> dict:
@@ -32,7 +30,10 @@ async def retrieve_products():
 
 # Retrieve a product with a matching ID
 async def retrieve_product(_id: str) -> dict:
-    product = await get_item_from_collection(_id=_id, collection=product_collection)
+    product = await get_item_from_collection(
+        _id=_id,
+        collection=product_collection,
+    )
     if product.status:
         return product_helper(product.data)
 
@@ -44,15 +45,27 @@ async def add_product(product_data: dict) -> ResultGeneric:
 
     # Check if the ingredient_key exists in the database
     ingredient_key = product_data.get("ingredient_key")
-    result = await check_pk_in_collection(object_type="ingredient", object_id=ingredient_key, result=result)
+    result = await check_pk_in_collection(
+        object_type="ingredient",
+        object_id=ingredient_key,
+        result=result
+    )
 
     # Check if the brand_key exists in the database
     brand_key = product_data.get("brand_key")
-    result = await check_pk_in_collection(object_type="brand", object_id=brand_key, result=result)
+    result = await check_pk_in_collection(
+        object_type="brand",
+        object_id=brand_key,
+        result=result
+    )
 
     # Check if the category_key exists in the database
     category_key = product_data.get("category_key")
-    result = await check_pk_in_collection(object_type="category", object_id=category_key, result=result)
+    result = await check_pk_in_collection(
+        object_type="category",
+        object_id=category_key,
+        result=result,
+    )
 
     if not result.status:
         return result
@@ -83,18 +96,34 @@ async def update_product(_id: str, product_data: dict):
         return result
 
     # Check if the product exists
-    result = await check_pk_in_collection(object_type="product", object_id=_id, result=result)
+    result = await check_pk_in_collection(
+        object_type="product",
+        object_id=_id,
+        result=result,
+    )
 
     # Check if the ingredient_key exists in the database
     ingredient_key = product_data.get("ingredient_key")
-    result = await check_pk_in_collection(object_type="ingredient", object_id=ingredient_key, result=result)
+    result = await check_pk_in_collection(
+        object_type="ingredient",
+        object_id=ingredient_key,
+        result=result,
+    )
 
     brand_key = product_data.get("brand_key")
-    result = await check_pk_in_collection(object_type="brand", object_id=brand_key, result=result)
+    result = await check_pk_in_collection(
+        object_type="brand",
+        object_id=brand_key,
+        result=result,
+    )
 
     # Check if the category_key exists in the database
     category_key = product_data.get("category_key")
-    result = await check_pk_in_collection(object_type="category", object_id=category_key, result=result)
+    result = await check_pk_in_collection(
+        object_type="category",
+        object_id=category_key,
+        result=result,
+    )
 
     if not result.status:
         return result
@@ -116,5 +145,7 @@ async def update_product(_id: str, product_data: dict):
 
 # Delete a product from the database
 async def delete_product(_id: str):
-    return await delete_item_from_collection(_id=_id, collection=product_collection)
-
+    return await delete_item_from_collection(
+        _id=_id,
+        collection=product_collection,
+    )

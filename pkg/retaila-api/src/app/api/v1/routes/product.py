@@ -52,7 +52,7 @@ async def get_product_data(id: str):
         )
     return ErrorResponseModel(
         code=status.HTTP_404_NOT_FOUND,
-        error_message="Product doesn't exist."
+        error_message="Product '{}' doesn't exist.".format(id)
     )
 
 

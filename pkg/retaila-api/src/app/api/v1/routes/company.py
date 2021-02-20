@@ -56,7 +56,7 @@ async def get_company_data(id: str):
         )
     return ErrorResponseModel(
         code=status.HTTP_404_NOT_FOUND,
-        error_message="Company doesn't exist.",
+        error_message="Company '{}' doesn't exist.".format(id),
     )
 
 

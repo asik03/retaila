@@ -4,9 +4,7 @@ from app.core.database import database, ResultGeneric
 from app.core.utils import check_empty_body_request, check_pk_in_collection, delete_item_from_collection, \
     get_item_from_collection
 
-brand_collection = database.get_collection("brands_collection")
-
-is_obj_id = False
+brand_collection = database.get_collection("brand_collection")
 
 
 def brand_helper(brand) -> dict:
@@ -27,7 +25,7 @@ async def retrieve_brands():
 
 # Retrieve a brand with a matching ID
 async def retrieve_brand(_id: str) -> dict:
-    brand = await get_item_from_collection(_id=_id, collection=brand_collection, is_object_id=is_obj_id)
+    brand = await get_item_from_collection(_id=_id, collection=brand_collection)
     if brand.status:
         return brand_helper(brand.data)
 
@@ -63,7 +61,7 @@ async def update_brand(_id: str, brand_data: dict):
         return result
 
     # Check if the brand exists
-    result = check_pk_in_collection(object_type="brand", object_id=_id, result=result, is_object_id=is_obj_id)
+    result = check_pk_in_collection(object_type="brand", object_id=_id, result=result)
 
     if not result.status:
         return result
@@ -85,5 +83,5 @@ async def update_brand(_id: str, brand_data: dict):
 
 # Delete a brand from the database
 async def delete_brand(_id: str):
-    return await delete_item_from_collection(_id=_id, collection=brand_collection, is_object_id=is_obj_id)
+    return await delete_item_from_collection(_id=_id, collection=brand_collection)
 

@@ -3,6 +3,17 @@ from bson import ObjectId
 from app.core.database import ResultGeneric
 
 
+is_object_id_map_dict = {
+  "brand": False,
+  "category": False,
+  "company": False,
+  "ingredient": False,
+  "product": True,
+  "recipe": True,
+  "supermarket_local": False,
+}
+
+
 def check_empty_body_request(data, result):
     # Check if an empty request body is sent.
     if len(data) < 1:
@@ -14,7 +25,7 @@ def check_empty_body_request(data, result):
     return result
 
 
-async def check_pk_in_collection(object_type, object_id, result, is_object_id):
+async def check_pk_in_collection(object_type, object_id, result):
     """A function that check if exist a primary key in a foreign collection.
 
     Parameters
@@ -24,7 +35,6 @@ async def check_pk_in_collection(object_type, object_id, result, is_object_id):
     :param object_id:
         Id name of the element to be checked
     :param result:
-    :param is_object_id:
 
     Returns:
     -------
@@ -41,8 +51,9 @@ async def check_pk_in_collection(object_type, object_id, result, is_object_id):
 
     _module = __import__(my_dict['import_from_list'], globals(), locals(), my_dict['collection'], 0)
     _collection = getattr(_module, my_dict['collection'])
+    _is_obj_id = is_object_id_map_dict[object_type]
 
-    if is_object_id:
+    if _is_obj_id:
         object_id = ObjectId(object_id)
 
     if not await _collection.find_one({"_id": object_id}):
@@ -53,7 +64,7 @@ async def check_pk_in_collection(object_type, object_id, result, is_object_id):
         return result
 
 
-async def delete_item_from_collection(_id: str, collection, is_object_id):
+async def delete_item_from_collection(_id: str, collection):
     """
     A generic function that deletes an item from the database.
 
@@ -73,7 +84,10 @@ async def delete_item_from_collection(_id: str, collection, is_object_id):
     result = ResultGeneric().reset()
     result.status = True
 
-    if is_object_id:
+    object_name = collection.name[:-11]
+    _is_obj_id = is_object_id_map_dict[object_name]
+
+    if _is_obj_id:
         _id = ObjectId(_id)
 
     if await collection.find_one({"_id": _id}):
@@ -85,7 +99,7 @@ async def delete_item_from_collection(_id: str, collection, is_object_id):
     return result
 
 
-async def get_item_from_collection(_id: str, collection, is_object_id):
+async def get_item_from_collection(_id: str, collection):
     """
     A generic function that gets an item from the database.
 
@@ -105,7 +119,10 @@ async def get_item_from_collection(_id: str, collection, is_object_id):
     result = ResultGeneric().reset()
     result.status = True
 
-    if is_object_id:
+    object_name = collection.name[:-11]
+    _is_obj_id = is_object_id_map_dict[object_name]
+
+    if _is_obj_id:
         _id = ObjectId(_id)
 
     result.data = await collection.find_one({"_id": _id})

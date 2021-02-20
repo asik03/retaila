@@ -35,7 +35,7 @@ def test_read_nonexistent_brand():
     assert response.json() == {
         "code": 404,
         "message": "An error occurred.",
-        "error_message": "Brand doesn't exist."
+        "error_message": "Brand '{}' doesn't exist.".format(test_nonexistent_brand_id)
     }
 
 
@@ -95,6 +95,6 @@ def test_delete_nonexistent_brand():
       "code": 422,
       "message": "An error occurred.",
       "error_message": [
-        "Couldn't find the ID '" + test_nonexistent_brand_id + "' in the brands_collection to delete."
+        "Couldn't find the ID '" + test_nonexistent_brand_id + "' in the brand_collection to delete."
       ]
     }

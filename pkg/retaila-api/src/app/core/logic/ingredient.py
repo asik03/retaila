@@ -1,11 +1,9 @@
 from pymongo.errors import DuplicateKeyError
 from app.core.database import database, ResultGeneric
 from app.core.utils import check_empty_body_request, check_pk_in_collection, delete_item_from_collection, \
-    get_item_from_collection
+    get_item_from_collection, is_object_id_map_dict
 
-ingredient_collection = database.get_collection("ingredients_collection")
-
-is_obj_id = False  # The ingredient name is the ID itself
+ingredient_collection = database.get_collection("ingredient_collection")
 
 
 def ingredient_helper(ingredient) -> dict:
@@ -24,7 +22,7 @@ async def retrieve_ingredients():
 
 # Retrieve a ingredient with a matching ID
 async def retrieve_ingredient(_id: str) -> dict:
-    ingredient = await get_item_from_collection(_id=_id, collection=ingredient_collection, is_object_id=is_obj_id)
+    ingredient = await get_item_from_collection(_id=_id, collection=ingredient_collection)
     if ingredient.status:
         return ingredient_helper(ingredient.data)
 
@@ -60,7 +58,7 @@ async def update_ingredient(_id: str, ingredient_data: dict):
         return result
 
     # Check if the ingredient exists
-    result = check_pk_in_collection(object_type="ingredient", object_id=_id, result=result, is_object_id=is_obj_id)
+    result = check_pk_in_collection(object_type="ingredient", object_id=_id, result=result)
     if not result.status:
         return result
 
@@ -82,5 +80,5 @@ async def update_ingredient(_id: str, ingredient_data: dict):
 
 # Delete a ingredient from the database
 async def delete_ingredient(_id: str):
-    return await delete_item_from_collection(_id=_id, collection=ingredient_collection, is_object_id=is_obj_id)
+    return await delete_item_from_collection(_id=_id, collection=ingredient_collection)
 

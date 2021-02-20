@@ -56,7 +56,7 @@ async def get_ingredient_data(id: str):
         )
     return ErrorResponseModel(
         code=status.HTTP_404_NOT_FOUND,
-        error_message="Ingredient doesn't exist.",
+        error_message="Ingredient '{}' doesn't exist.".format(id),
     )
 
 
