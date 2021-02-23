@@ -45,7 +45,7 @@ async def add_supermarket_local(supermarket_local_data: dict) -> ResultGeneric:
     company_key = supermarket_local_data.get("company_key")
     result = await check_pk_in_collection(
         object_type="company",
-        object_id=company_key,
+        _id=company_key,
         result=result,
     )
 
@@ -54,7 +54,7 @@ async def add_supermarket_local(supermarket_local_data: dict) -> ResultGeneric:
         product_key = product.get("product_key")
         result = await check_pk_in_collection(
             object_type="product",
-            object_id=product_key,
+            _id=product_key,
             result=result,
         )
 
@@ -92,7 +92,7 @@ async def update_supermarket_local(_id: str, supermarket_local_data: dict):
     # Check if the supermarket_local exists
     result = await check_pk_in_collection(
         object_type="supermarket_local",
-        object_id=_id, result=result,
+        _id=_id, result=result,
     )
 
     if not result.status:
@@ -102,7 +102,7 @@ async def update_supermarket_local(_id: str, supermarket_local_data: dict):
     company_key = supermarket_local_data.get("company_key")
     result = await check_pk_in_collection(
         object_type="company",
-        object_id=company_key,
+        _id=company_key,
         result=result,
     )
 
@@ -111,7 +111,7 @@ async def update_supermarket_local(_id: str, supermarket_local_data: dict):
         product_key = product.get("product_key")
         result = check_pk_in_collection(
             object_type="product",
-            object_id=product_key,
+            _id=product_key,
             result=result
         )
 

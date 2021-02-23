@@ -47,7 +47,7 @@ async def add_product(product_data: dict) -> ResultGeneric:
     ingredient_key = product_data.get("ingredient_key")
     result = await check_pk_in_collection(
         object_type="ingredient",
-        object_id=ingredient_key,
+        _id=ingredient_key,
         result=result
     )
 
@@ -55,7 +55,7 @@ async def add_product(product_data: dict) -> ResultGeneric:
     brand_key = product_data.get("brand_key")
     result = await check_pk_in_collection(
         object_type="brand",
-        object_id=brand_key,
+        _id=brand_key,
         result=result
     )
 
@@ -63,7 +63,7 @@ async def add_product(product_data: dict) -> ResultGeneric:
     category_key = product_data.get("category_key")
     result = await check_pk_in_collection(
         object_type="category",
-        object_id=category_key,
+        _id=category_key,
         result=result,
     )
 
@@ -98,7 +98,7 @@ async def update_product(_id: str, product_data: dict):
     # Check if the product exists
     result = await check_pk_in_collection(
         object_type="product",
-        object_id=_id,
+        _id=_id,
         result=result,
     )
 
@@ -106,14 +106,14 @@ async def update_product(_id: str, product_data: dict):
     ingredient_key = product_data.get("ingredient_key")
     result = await check_pk_in_collection(
         object_type="ingredient",
-        object_id=ingredient_key,
+        _id=ingredient_key,
         result=result,
     )
 
     brand_key = product_data.get("brand_key")
     result = await check_pk_in_collection(
         object_type="brand",
-        object_id=brand_key,
+        _id=brand_key,
         result=result,
     )
 
@@ -121,7 +121,7 @@ async def update_product(_id: str, product_data: dict):
     category_key = product_data.get("category_key")
     result = await check_pk_in_collection(
         object_type="category",
-        object_id=category_key,
+        _id=category_key,
         result=result,
     )
 

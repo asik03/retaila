@@ -25,14 +25,14 @@ def check_empty_body_request(data, result):
     return result
 
 
-async def check_pk_in_collection(object_type, object_id, result):
+async def check_pk_in_collection(object_type, _id, result):
     """A function that check if exist a primary key in a foreign collection.
 
     Parameters
     -------
     :param object_type: str
         Class, object, table or collection from where is checked
-    :param object_id:
+    :param _id:
         Id name of the element to be checked
     :param result:
 
@@ -54,10 +54,15 @@ async def check_pk_in_collection(object_type, object_id, result):
     _is_obj_id = is_object_id_map_dict[object_type]
 
     if _is_obj_id:
-        object_id = ObjectId(object_id)
+        try:
+            _id = ObjectId(_id)
+        except Exception as e:
+            result.error_message.append(e.args[0])
+            result.status = False
+            return result
 
-    if not await _collection.find_one({"_id": object_id}):
-        result.error_message.append("The {} '{}' doesn't exist in the database".format(object_type, object_id))
+    if not await _collection.find_one({"_id": _id}):
+        result.error_message.append("The {} '{}' doesn't exist in the database".format(object_type, _id))
         result.status = False
         return result
     else:
@@ -88,7 +93,12 @@ async def delete_item_from_collection(_id: str, collection):
     _is_obj_id = is_object_id_map_dict[object_name]
 
     if _is_obj_id:
-        _id = ObjectId(_id)
+        try:
+            _id = ObjectId(_id)
+        except Exception as e:
+            result.error_message.append(e.args[0])
+            result.status = False
+            return result
 
     if await collection.find_one({"_id": _id}):
         await collection.delete_one({"_id": _id})
@@ -123,7 +133,12 @@ async def get_item_from_collection(_id: str, collection):
     _is_obj_id = is_object_id_map_dict[object_name]
 
     if _is_obj_id:
-        _id = ObjectId(_id)
+        try:
+            _id = ObjectId(_id)
+        except Exception as e:
+            result.error_message.append(e.args[0])
+            result.status = False
+            return result
 
     result.data = await collection.find_one({"_id": _id})
 

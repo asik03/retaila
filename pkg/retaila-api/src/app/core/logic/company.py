@@ -57,7 +57,7 @@ async def update_company(_id: str, company_data: dict):
         return result
 
     # Check if the company exists
-    result = check_pk_in_collection(object_type="company", object_id=_id, result=result)
+    result = check_pk_in_collection(object_type="company", _id=_id, result=result)
     if not result.status:
         return result
 
