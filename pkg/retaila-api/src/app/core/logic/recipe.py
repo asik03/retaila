@@ -76,7 +76,7 @@ async def update_recipe(_id: str, recipe_data: dict):
         return result
 
     # Check if the recipe exists
-    result = check_pk_in_collection(
+    result = await check_pk_in_collection(
         object_type="recipe",
         _id=_id,
         result=result,
@@ -87,7 +87,7 @@ async def update_recipe(_id: str, recipe_data: dict):
 
     # # Check if the author exists
     author_key = recipe_data.get("author_id")
-    result = check_pk_in_collection(
+    result = await check_pk_in_collection(
         object_type="author",
         _id=author_key,
         result=result,

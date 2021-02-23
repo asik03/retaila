@@ -58,7 +58,7 @@ async def update_category(_id: str, category_data: dict):
         return result
 
     # Check if the category exists
-    result = check_pk_in_collection(object_type="category", _id=_id, result=result)
+    result = await check_pk_in_collection(object_type="category", _id=_id, result=result)
     if not result.status:
         return result
 

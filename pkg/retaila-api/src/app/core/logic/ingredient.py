@@ -58,7 +58,7 @@ async def update_ingredient(_id: str, ingredient_data: dict):
         return result
 
     # Check if the ingredient exists
-    result = check_pk_in_collection(object_type="ingredient", _id=_id, result=result)
+    result = await check_pk_in_collection(object_type="ingredient", _id=_id, result=result)
     if not result.status:
         return result
 

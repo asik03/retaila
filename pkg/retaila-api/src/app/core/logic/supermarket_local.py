@@ -109,7 +109,7 @@ async def update_supermarket_local(_id: str, supermarket_local_data: dict):
     # Check if the products of the supermarket_local exist in the database
     for product in supermarket_local_data.get("products"):
         product_key = product.get("product_key")
-        result = check_pk_in_collection(
+        result = await check_pk_in_collection(
             object_type="product",
             _id=product_key,
             result=result
