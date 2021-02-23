@@ -71,6 +71,7 @@ async def update_ingredient_data(id: str, req: UpdateIngredientModel = Body(...)
         return ResponseModel(
             code=status.HTTP_200_OK,
             message="Ingredient with ID: {} name update is successful".format(id),
+            data=updated_ingredient.data
         )
     return ErrorResponseModel(
         code=status.HTTP_422_UNPROCESSABLE_ENTITY,

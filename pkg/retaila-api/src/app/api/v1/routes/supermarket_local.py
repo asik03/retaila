@@ -68,6 +68,7 @@ async def update_supermarket_local_data(id: str, req: UpdateSupermarketLocalMode
         return ResponseModel(
             code=status.HTTP_200_OK,
             message="Supermarket_local with ID: {} name update is successful".format(id),
+            data=updated_supermarket_local.data
         )
     return ErrorResponseModel(
         code=status.HTTP_422_UNPROCESSABLE_ENTITY,

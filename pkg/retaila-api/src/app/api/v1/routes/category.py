@@ -68,6 +68,7 @@ async def update_category_data(id: str, req: UpdateCategoryModel = Body(...)):
         return ResponseModel(
             code=status.HTTP_200_OK,
             message="Category with ID: {} name update is successful".format(id),
+            data=updated_category.data
         )
     return ErrorResponseModel(
         code=status.HTTP_422_UNPROCESSABLE_ENTITY,

@@ -71,6 +71,7 @@ async def update_company_data(id: str, req: UpdateCompanyModel = Body(...)):
         return ResponseModel(
             code=status.HTTP_200_OK,
             message="Company with ID: {} name update is successful".format(id),
+            data=updated_company.data
         )
     return ErrorResponseModel(
         code=status.HTTP_422_UNPROCESSABLE_ENTITY,

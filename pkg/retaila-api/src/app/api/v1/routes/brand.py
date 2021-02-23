@@ -67,6 +67,8 @@ async def update_brand_data(id: str, req: UpdateBrandModel = Body(...)):
         return ResponseModel(
             code=status.HTTP_200_OK,
             message="Brand with ID: {} name update is successful".format(id),
+            data=updated_brand.data
+
         )
     return ErrorResponseModel(
         code=status.HTTP_422_UNPROCESSABLE_ENTITY,
